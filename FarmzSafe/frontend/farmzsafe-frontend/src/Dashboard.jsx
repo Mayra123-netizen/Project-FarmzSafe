@@ -140,28 +140,28 @@ const Dashboard = ({ onBack, role = 'Owner' }) => {
             
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-icon-wrapper">🐄</div>
+                <div className="stat-icon-wrapper" style={{backgroundColor: '#e8f5e9'}}>🐄</div>
                 <div className="stat-info">
                   <span className="stat-label">Total Animals</span>
                   <span className="stat-value">{farms.reduce((acc, f) => acc + f.animals.cows + f.animals.goats + f.animals.sheep, 0)}</span>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon-wrapper">💉</div>
+                <div className="stat-icon-wrapper" style={{backgroundColor: '#e3f2fd'}}>💉</div>
                 <div className="stat-info">
                   <span className="stat-label">Vaccinated</span>
-                  <span className="stat-value">312</span>
+                  <span className="stat-value">{vaccines.filter(v => v.status === 'Completed').length}</span>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon-wrapper">⚠️</div>
+                <div className="stat-icon-wrapper" style={{backgroundColor: '#fff3e0'}}>⚠️</div>
                 <div className="stat-info">
-                  <span className="stat-label">Unvaccinated</span>
-                  <span className="stat-value">170</span>
+                  <span className="stat-label">Pending</span>
+                  <span className="stat-value">{vaccines.filter(v => v.status === 'Pending').length}</span>
                 </div>
               </div>
               <div className="stat-card">
-                <div className="stat-icon-wrapper">🏡</div>
+                <div className="stat-icon-wrapper" style={{backgroundColor: '#f1f8e9'}}>🏡</div>
                 <div className="stat-info">
                   <span className="stat-label">Active Farms</span>
                   <span className="stat-value">{farms.length}</span>
@@ -182,12 +182,22 @@ const Dashboard = ({ onBack, role = 'Owner' }) => {
                   <Bar data={{
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [{
-                      label: 'Monthly Vaccinations',
+                      label: 'Vaccinations',
                       data: [45, 52, 38, 65, 48, 72],
                       backgroundColor: '#5da418',
                     }]
                   }} options={{ maintainAspectRatio: false }} />
                 </div>
+              </div>
+            </div>
+
+            <div className="animal-types-preview">
+              <h3>Livestock Overview</h3>
+              <div className="animal-grid">
+                <div className="animal-item"><span>🐄</span> <p>Cows ({farms.reduce((acc, f) => acc + (f.animals.cows || 0), 0)})</p></div>
+                <div className="animal-item"><span>🐐</span> <p>Goats ({farms.reduce((acc, f) => acc + (f.animals.goats || 0), 0)})</p></div>
+                <div className="animal-item"><span>🐑</span> <p>Sheep ({farms.reduce((acc, f) => acc + (f.animals.sheep || 0), 0)})</p></div>
+                <div className="animal-item"><span>💉</span> <p>Vaccinated ({vaccines.filter(v => v.status === 'Completed').length})</p></div>
               </div>
             </div>
           </div>
