@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import heroPremium from './assets/hero-premium.png'
+import heroPremium from './assets/hero-cows.jpg'
 import Dashboard from './Dashboard'
 import Auth from './Auth'
 import './App.css'
