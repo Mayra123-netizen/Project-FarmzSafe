@@ -3,7 +3,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const connectDB = require("./config/database");
-const routes = require('./routes/routes');
+const userRoute = require('./routes/userRoutes');
+const farmRoute = require('./routes/farmRoutes');
+const vaccineRoute = require('./routes/vaccineRoutes');
+const reportRoute = require('./routes/reportRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,12 +19,12 @@ app.use(express.json());
 connectDB(); 
 
 // Routes
-app.use('/api', routes);
+app.use('/api/Users', userRoute);
+app.use('/api/farms', farmRoute);
+app.use('/api/Vaccine', vaccineRoute);
+app.use('/api/Report', reportRoute);
 
-// Base route
-app.get('/', (req, res) => {
-  res.send('FarmzSafe API is running...');
-});
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

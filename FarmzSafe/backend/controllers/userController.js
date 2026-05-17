@@ -15,12 +15,12 @@ const SignUpUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { name, email, password,role } = req.body;
-    const user = await User.findOne({ name, email, password, role });
+    const {email, password } = req.body;
+    const user = await User.findOne({email,password});
     if (!user){
-      return res.status(404).json({message: " User not found, Recheck your credentials"})
+      return res.status(404).json({message: "User not found, Recheck your credentials"})
     }
-    res.status(200);
+    res.status(200).json({message: "User logged in Successfully"});
   } catch (error) {
     res.status(401).json({ message: "User is unauthorised" });
     res.status(500).json({message:"Server error"});
@@ -30,4 +30,3 @@ const loginUser = async (req, res) => {
 
 module.exports = {loginUser, SignUpUser};
 
-//mongodb+srv://lemayra_db_user:d8tDIvODl7Cnk8Cn@cluster0.4at4gsj.mongodb.net/?appName=Cluster0

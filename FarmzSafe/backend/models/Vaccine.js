@@ -8,6 +8,6 @@ const VaccineSchema = new mongoose.Schema({
     expiryDate: {type: Date, required : true}
     
 
-})
+});
 
-module.exports = mongoose.Model("Vaccine", VaccineSchema)
+module.exports = mongoose.model('Vaccine', VaccineSchema)
