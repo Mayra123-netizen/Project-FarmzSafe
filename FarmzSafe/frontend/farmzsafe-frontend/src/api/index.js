@@ -23,6 +23,19 @@ async function request(endpoint, options = {}) {
   return res.json();
 }
 
+function getUserId() {
+  try {
+    const userStr = localStorage.getItem('farmzsafe_user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.id || user._id || null;
+    }
+  } catch (err) {
+    console.error("Failed to parse user from localStorage", err);
+  }
+  return null;
+}
+
 // ── Auth (routes: /api/Users) ──────────────────────────
 export const authAPI = {
   login: async (data) => {
@@ -142,10 +155,12 @@ export const farmsAPI = {
       ];
     }
 
+    const ownerId = getUserId() || "664c12345678901234567890";
     const backendData = {
       farmName: data.name,
       location: data.location,
       contact: data.manager,
+      owner: ownerId,
       animals: animalsList
     };
     return request('/farms/AddFarm', { method: 'POST', body: JSON.stringify(backendData) });
@@ -169,10 +184,12 @@ export const farmsAPI = {
       ];
     }
 
+    const ownerId = getUserId() || "664c12345678901234567890";
     const backendData = {
       farmName: data.name,
       location: data.location,
       contact: data.manager,
+      owner: ownerId,
       animals: animalsList
     };
     return request(`/farms/editFarm/${id}`, { method: 'PUT', body: JSON.stringify(backendData) });
