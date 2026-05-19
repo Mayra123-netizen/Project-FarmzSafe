@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.get('/getVaccines', getVaccines);
 
-router.delete('/deleteVaccine',deleteVaccine);
+router.delete('/deleteVaccine/:id', deleteVaccine);
 
-router.put('/editVaccine', editVaccine);
+router.put('/editVaccine/:id', editVaccine);
 
 router.post('/addVaccine', addVaccine);
 

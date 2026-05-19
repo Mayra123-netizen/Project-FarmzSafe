@@ -8,14 +8,14 @@ router.post('/AddFarm', AddFarm);
 
 router.get('/getFarms', getFarms);
 
-router.delete('/deleteFarm',deleteFarm);
+router.delete('/deleteFarm/:id', deleteFarm);
 
-router.put('/editFarm', editFarm);
+router.put('/editFarm/:id', editFarm);
 
-router.get('/getfarmbyID', getFarmById);
+router.get('/getfarmbyID/:id', getFarmById);
 
-router.post('/addanimal', addAnimalToFarm);
+router.post('/addanimal/:farmId', addAnimalToFarm);
 
-router.put('/updateanimal', updateAnimalInFarm);
+router.put('/updateanimal/:farmId/:animalId', updateAnimalInFarm);
 
 module.exports= router;

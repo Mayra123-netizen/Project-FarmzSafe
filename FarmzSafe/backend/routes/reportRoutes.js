@@ -5,10 +5,10 @@ const router = express.Router();
 
 router.get('/getReports', getReports);
 
-router.delete('/deleteReport',deleteReport);
+router.delete('/deleteReport/:id', deleteReport);
 
-router.put('/editReport', editReport);
+router.put('/editReport/:id', editReport);
 
-router.post('/addReport',addReport);
+router.post('/addReport', addReport);
 
 module.exports = router;
