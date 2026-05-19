@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, MapPin, ShieldCheck, FileText, LogOut } from 'lucide-react';
+import { Home, MapPin, ShieldCheck, FileText, LogOut, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Sidebar.css';
 
@@ -13,6 +14,21 @@ const navItems = [
 export default function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const handleLogout = () => {
     logout();
@@ -34,7 +50,7 @@ export default function Sidebar() {
             end={to === '/dashboard'}
             className={({ isActive }) => isActive ? 'active' : ''}
           >
-            {icon} {label}
+            {icon} <span>{label}</span>
           </NavLink>
         ))}
       </nav>
@@ -47,8 +63,12 @@ export default function Sidebar() {
             <span className="u-role">{user?.role || 'Active'}</span>
           </div>
         </div>
+        <button className="theme-toggle-btn" onClick={toggleTheme} title="Toggle Dark/Light Mode">
+          {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+        </button>
         <button className="logout-btn" onClick={handleLogout}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} /> <span>Logout</span>
         </button>
       </div>
     </aside>
