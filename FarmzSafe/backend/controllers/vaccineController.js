@@ -15,11 +15,17 @@ const getVaccines = async (req, res) => {
 
 const addVaccine = async (req, res) => {
       try {
-        const { vaccineName, DiseaseName, Isavailable } = req.body;
-        const vaccine = await Vaccine.create({ vaccineName, DiseaseName, Isavailable});
+        const { vaccineName, diseaseName, IsAvailable, stock, expiryDate } = req.body;
+        const vaccine = await Vaccine.create({ 
+          vaccineName, 
+          diseaseName, 
+          IsAvailable: IsAvailable !== undefined ? IsAvailable : true,
+          stock: stock || 0,
+          expiryDate: expiryDate || new Date()
+        });
         res.status(201).json(vaccine);
       } catch (error) {
-        res.status(400).json(error.message);
+        res.status(400).json({ message: error.message });
       }
 };
 
