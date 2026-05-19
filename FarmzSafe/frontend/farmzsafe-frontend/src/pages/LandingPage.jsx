@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import heroCows from '../assets/hero-cows.jpg';
-import '../App.css';
+import '../styles/App.css';
 
 const ShieldIcon = () => (
   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

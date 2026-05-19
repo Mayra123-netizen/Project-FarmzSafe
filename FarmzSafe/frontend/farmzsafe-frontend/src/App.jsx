@@ -15,7 +15,7 @@ import FarmsPage from './pages/dashboard/FarmsPage';
 import VaccinePage from './pages/dashboard/VaccinePage';
 import ReportsPage from './pages/dashboard/ReportsPage';
 
-import './App.css';
+import './styles/App.css';
 
 export default function App() {
   return (
