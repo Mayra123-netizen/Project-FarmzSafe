@@ -5,12 +5,15 @@ const ANIMAL_TYPES = ['Mixed (multiple types)', 'Cattle', 'Poultry', 'Goats', 'S
 const EMPTY = {
   name: '', location: '', yearEstablished: '',
   animalType: 'Mixed (multiple types)',
-  totalAnimals: '', numVaccinated: '',
+  totalAnimals: '', numVaccinated: '', numSick: '0',
   manager: '', notes: ''
 };
 
 export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading }) {
-  const [form, setForm] = useState(initial);
+  const [form, setForm] = useState({
+    ...EMPTY,
+    ...initial
+  });
 
   const set = (field) => (e) => setForm(prev => ({ ...prev, [field]: e.target.value }));
 
@@ -48,14 +51,18 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
           </select>
         </div>
 
-        <div className="form-group-row">
-          <div className="form-group">
-            <label>Total No. of Animals</label>
+        <div className="form-group-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+          <div className="form-group" style={{ margin: 0 }}>
+            <label>Total Animals</label>
             <input type="number" placeholder="e.g. 100" value={form.totalAnimals} onChange={set('totalAnimals')} required />
           </div>
-          <div className="form-group">
-            <label>No. Vaccinated</label>
+          <div className="form-group" style={{ margin: 0 }}>
+            <label>Vaccinated</label>
             <input type="number" placeholder="e.g. 85" value={form.numVaccinated} onChange={set('numVaccinated')} required />
+          </div>
+          <div className="form-group" style={{ margin: 0 }}>
+            <label>Sick / Ill</label>
+            <input type="number" placeholder="e.g. 0" value={form.numSick} onChange={set('numSick')} required />
           </div>
         </div>
 

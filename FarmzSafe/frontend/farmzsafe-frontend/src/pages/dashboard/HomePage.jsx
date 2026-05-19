@@ -33,12 +33,13 @@ export default function HomePage() {
   }, []);
 
   const totalAnimals = farms.reduce((acc, f) => acc + (f.animals?.cows || 0) + (f.animals?.goats || 0) + (f.animals?.sheep || 0), 0);
-  const vaccinated = vaccines.filter(v => v.status === 'Completed').length;
-  const pending = vaccines.filter(v => v.status === 'Pending').length;
+  const totalVaccinatedAnimals = farms.reduce((acc, f) => acc + (f.numVaccinated || 0), 0);
+  const totalSickAnimals = farms.reduce((acc, f) => acc + (f.numSick || 0), 0);
+  const nonVaccinatedAnimals = Math.max(0, totalAnimals - totalVaccinatedAnimals);
 
   const doughnutData = {
-    labels: ['Vaccinated', 'Pending'],
-    datasets: [{ data: [vaccinated, pending], backgroundColor: ['#2d5a27', '#ff9800'], borderColor: ['#fff', '#fff'], borderWidth: 2 }],
+    labels: ['Vaccinated', 'Pending / Unvaccinated'],
+    datasets: [{ data: [totalVaccinatedAnimals, nonVaccinatedAnimals], backgroundColor: ['#2d5a27', '#ff9800'], borderColor: ['#fff', '#fff'], borderWidth: 2 }],
   };
 
   if (loading) return <div className="dashboard-view"><p>Loading...</p></div>;
@@ -62,8 +63,8 @@ export default function HomePage() {
       <div className="stats-grid">
         {[
           { label: 'Total Animals', value: totalAnimals, bg: '#e8f5e9', icon: '🐄' },
-          { label: 'Vaccinated',    value: vaccinated,   bg: '#e3f2fd', icon: '💉' },
-          { label: 'Pending',       value: pending,      bg: '#fff3e0', icon: '⚠️' },
+          { label: 'Vaccinated',    value: totalVaccinatedAnimals,   bg: '#e3f2fd', icon: '💉' },
+          { label: 'Sick / Ill',    value: totalSickAnimals,      bg: '#ffebee', icon: '⚠️' },
           { label: 'Active Farms',  value: farms.length, bg: '#f1f8e9', icon: '🏡' },
         ].map(({ label, value, bg, icon }) => (
           <div key={label} className="stat-card">
@@ -100,7 +101,7 @@ export default function HomePage() {
           <div className="animal-item"><span>🐄</span><p>Cows ({farms.reduce((a, f) => a + (f.animals?.cows || 0), 0)})</p></div>
           <div className="animal-item"><span>🐐</span><p>Goats ({farms.reduce((a, f) => a + (f.animals?.goats || 0), 0)})</p></div>
           <div className="animal-item"><span>🐑</span><p>Sheep ({farms.reduce((a, f) => a + (f.animals?.sheep || 0), 0)})</p></div>
-          <div className="animal-item"><span>💉</span><p>Vaccinated ({vaccinated})</p></div>
+          <div className="animal-item"><span>💉</span><p>Vaccinated ({totalVaccinatedAnimals})</p></div>
         </div>
       </div>
     </div>

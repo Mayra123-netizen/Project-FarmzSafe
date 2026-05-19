@@ -70,6 +70,7 @@ export const farmsAPI = {
       return data.map(f => {
         const total = f.animals ? f.animals.reduce((sum, a) => sum + (a.count || 0), 0) : 0;
         const vac = f.animals ? f.animals.reduce((sum, a) => sum + (a.vaccinatedAnimalCount || 0), 0) : 0;
+        const sick = f.animals ? f.animals.reduce((sum, a) => sum + (a.sickAnimalCount || 0), 0) : 0;
         
         let animalType = 'Mixed (multiple types)';
         if (f.animals && f.animals.length === 1) {
@@ -100,8 +101,10 @@ export const farmsAPI = {
           manager: f.contact || '',
           totalAnimals: total || 0,
           numVaccinated: vac || 0,
+          numSick: sick || 0,
           animalType,
           animals: animalsObj,
+          breakdown: f.animals || [],
           notes: ''
         };
       });
@@ -114,6 +117,7 @@ export const farmsAPI = {
     const f = await request(`/farms/getfarmbyID/${id}`);
     const total = f.animals ? f.animals.reduce((sum, a) => sum + (a.count || 0), 0) : 0;
     const vac = f.animals ? f.animals.reduce((sum, a) => sum + (a.vaccinatedAnimalCount || 0), 0) : 0;
+    const sick = f.animals ? f.animals.reduce((sum, a) => sum + (a.sickAnimalCount || 0), 0) : 0;
     
     let animalType = 'Mixed (multiple types)';
     if (f.animals && f.animals.length === 1) {
@@ -144,8 +148,10 @@ export const farmsAPI = {
       manager: f.contact || '',
       totalAnimals: total,
       numVaccinated: vac,
+      numSick: sick,
       animalType,
       animals: animalsObj,
+      breakdown: f.animals || [],
       notes: ''
     };
   },
@@ -153,18 +159,19 @@ export const farmsAPI = {
     const type = data.animalType || 'Mixed (multiple types)';
     let animalsList = [];
     if (type === 'Goats') {
-      animalsList = [{ type: 'Goats', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: 0 }];
+      animalsList = [{ type: 'Goats', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else if (type === 'Sheep') {
-      animalsList = [{ type: 'Sheep', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: 0 }];
+      animalsList = [{ type: 'Sheep', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else if (type === 'Cattle') {
-      animalsList = [{ type: 'Cows', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: 0 }];
+      animalsList = [{ type: 'Cows', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else {
       const count = Math.floor(Number(data.totalAnimals) / 3);
       const vac = Math.floor(Number(data.numVaccinated) / 3);
+      const sickVal = Math.floor(Number(data.numSick || 0) / 3);
       animalsList = [
-        { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: 0 },
-        { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: 0 },
-        { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: 0 }
+        { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+        { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+        { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
       ];
     }
 
@@ -182,18 +189,19 @@ export const farmsAPI = {
     const type = data.animalType || 'Mixed (multiple types)';
     let animalsList = [];
     if (type === 'Goats') {
-      animalsList = [{ type: 'Goats', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: 0 }];
+      animalsList = [{ type: 'Goats', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else if (type === 'Sheep') {
-      animalsList = [{ type: 'Sheep', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: 0 }];
+      animalsList = [{ type: 'Sheep', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else if (type === 'Cattle') {
-      animalsList = [{ type: 'Cows', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: 0 }];
+      animalsList = [{ type: 'Cows', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else {
       const count = Math.floor(Number(data.totalAnimals) / 3);
       const vac = Math.floor(Number(data.numVaccinated) / 3);
+      const sickVal = Math.floor(Number(data.numSick || 0) / 3);
       animalsList = [
-        { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: 0 },
-        { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: 0 },
-        { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: 0 }
+        { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+        { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+        { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
       ];
     }
 

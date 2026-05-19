@@ -74,26 +74,32 @@ export default function FarmsPage() {
           <div className="farm-report-header">
             <div className="report-cards-grid">
               <div className="report-mini-card">
-                <span className="val">{selectedFarm.totalAnimals || (selectedFarm.animals?.cows + selectedFarm.animals?.goats + selectedFarm.animals?.sheep)}</span>
+                <span className="val">{selectedFarm.totalAnimals ?? 0}</span>
                 <span>Total animals</span>
                 <span className="sub-val">Livestock</span>
               </div>
               <div className="report-mini-card">
-                <span className="val">{selectedFarm.numVaccinated || Math.round(selectedFarm.totalAnimals * 0.8)}</span>
+                <span className="val">{selectedFarm.numVaccinated ?? 0}</span>
                 <span>Vaccinated</span>
                 <span className="sub-val good">
-                  {Math.round(((selectedFarm.numVaccinated || (selectedFarm.totalAnimals * 0.8)) / (selectedFarm.totalAnimals || 100)) * 100)}%
+                  {selectedFarm.totalAnimals > 0 ? Math.round(((selectedFarm.numVaccinated ?? 0) / selectedFarm.totalAnimals) * 100) : 0}%
                 </span>
               </div>
               <div className="report-mini-card">
-                <span className="val">{(selectedFarm.totalAnimals - selectedFarm.numVaccinated) || Math.round(selectedFarm.totalAnimals * 0.2)}</span>
-                <span>Pending / Due</span>
-                <span className="sub-val pending">Action Required</span>
+                <span className="val">{selectedFarm.numSick ?? 0}</span>
+                <span>Sick / Ill</span>
+                <span className={`sub-val ${(selectedFarm.numSick ?? 0) > 0 ? 'pending' : 'good'}`}>
+                  {(selectedFarm.numSick ?? 0) > 0 ? 'Outbreak Alert' : 'No Disease'}
+                </span>
               </div>
               <div className="report-mini-card">
-                <span className="val">100%</span>
-                <span>Safety Rating</span>
-                <span className="sub-val good">Secure</span>
+                <span className="val">
+                  {selectedFarm.totalAnimals > 0 ? Math.round(((selectedFarm.totalAnimals - (selectedFarm.numSick ?? 0)) / selectedFarm.totalAnimals) * 100) : 100}%
+                </span>
+                <span>Safety Status</span>
+                <span className={`sub-val ${((selectedFarm.numSick ?? 0) / (selectedFarm.totalAnimals || 1)) > 0.05 ? 'pending' : 'good'}`}>
+                  {((selectedFarm.numSick ?? 0) / (selectedFarm.totalAnimals || 1)) > 0.05 ? 'High Risk' : 'Secure'}
+                </span>
               </div>
             </div>
           </div>
@@ -112,21 +118,30 @@ export default function FarmsPage() {
                 </tr>
               </thead>
               <tbody>
-                {selectedFarm.animals && Object.entries(selectedFarm.animals).map(([type, count]) => (
-                  <tr key={type}>
-                    <td><strong style={{ textTransform: 'capitalize' }}>{type}</strong></td>
-                    <td>{count}</td>
-                    <td>{count}</td>
-                    <td>0</td>
-                    <td className="coverage-cell">
-                      <div className="progress-container">
-                        <div className="progress-bar" style={{ width: '85%', backgroundColor: '#2d5a27' }}></div>
-                      </div>
-                      <span>85%</span>
-                    </td>
-                    <td><span className="status-badge healthy">Good</span></td>
-                  </tr>
-                ))}
+                {selectedFarm.breakdown && selectedFarm.breakdown.map((anim) => {
+                  const total = anim.count || 0;
+                  const vac = anim.vaccinatedAnimalCount || 0;
+                  const sick = anim.sickAnimalCount || 0;
+                  const healthy = Math.max(0, total - sick);
+                  const pct = total > 0 ? Math.round((vac / total) * 100) : 0;
+                  const status = sick > 0 ? 'Outbreak' : 'Healthy';
+                  
+                  return (
+                    <tr key={anim._id || anim.type}>
+                      <td><strong style={{ textTransform: 'capitalize' }}>{anim.type}</strong></td>
+                      <td>{total}</td>
+                      <td>{healthy}</td>
+                      <td>{sick}</td>
+                      <td className="coverage-cell">
+                        <div className="progress-container">
+                          <div className="progress-bar" style={{ width: `${pct}%`, backgroundColor: pct > 80 ? '#2d5a27' : '#ff9800' }}></div>
+                        </div>
+                        <span>{pct}%</span>
+                      </td>
+                      <td><span className={`status-badge ${status.toLowerCase()}`}>{status}</span></td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
