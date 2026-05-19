@@ -11,24 +11,24 @@ export default function HomePage() {
   const [farms, setFarms] = useState([]);
   const [vaccines, setVaccines] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [f, v] = await Promise.all([farmsAPI.getAll(), vaccinesAPI.getAll()]);
+      setFarms(f);
+      setVaccines(v);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Could not fetch dashboard summary data.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [f, v] = await Promise.all([farmsAPI.getAll(), vaccinesAPI.getAll()]);
-        setFarms(f);
-        setVaccines(v);
-      } catch {
-        // Use local demo data while backend is offline
-        setFarms([{ id: 1, name: "Fatima's Farm", location: "Kaduna State", animals: { cows: 45, goats: 32, sheep: 28 } }]);
-        setVaccines([
-          { id: 1, animal: 'Cow #102', name: 'Anthrax Vaccine', status: 'Completed' },
-          { id: 2, animal: 'Goat #B2', name: 'Rabies Shot', status: 'Pending' },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
     load();
   }, []);
 
@@ -42,6 +42,15 @@ export default function HomePage() {
   };
 
   if (loading) return <div className="dashboard-view"><p>Loading...</p></div>;
+  if (error) return (
+    <div className="dashboard-view">
+      <div className="error-alert">
+        <h3>Connection Error</h3>
+        <p>{error}</p>
+        <button className="btn-primary-small" onClick={load}>Retry Connection</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="dashboard-view">

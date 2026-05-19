@@ -4,30 +4,36 @@ import { reportsAPI } from '../../api';
 export default function ReportsPage() {
   const [reports, setReports] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchReports = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await reportsAPI.getSummary();
+      setReports(data);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Could not fetch reports.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const data = await reportsAPI.getSummary();
-        setReports(data);
-      } catch (err) {
-        // Mock fallback
-        setReports({
-          successfulChecks: 24,
-          casualties: 2,
-          monthlySummary: [
-            { id: 1, farmName: "Fatima's Farm", animalType: "Cattle", casualties: 0, successfulChecks: 2, notes: "All healthy this month" },
-            { id: 2, farmName: "Obi's Farm", animalType: "Sheep", casualties: 1, successfulChecks: 1, notes: "One casualty due to heat" }
-          ]
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchReports();
   }, []);
 
   if (loading) return <div className="dashboard-view"><p>Loading reports...</p></div>;
+  if (error) return (
+    <div className="dashboard-view">
+      <div className="error-alert">
+        <h3>Connection Error</h3>
+        <p>{error}</p>
+        <button className="btn-primary-small" onClick={fetchReports}>Retry Connection</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="dashboard-view">

@@ -9,18 +9,17 @@ export default function VaccinePage() {
   const [editingVaccine, setEditingVaccine] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchVaccines = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await vaccinesAPI.getAll();
       setVaccines(data);
     } catch (err) {
-      // Mock data fallback
-      setVaccines([
-        { id: 1, animal: 'Cow #102', name: 'Anthrax Vaccine', disease: 'Anthrax', date: '2026-05-10', nextDue: '2026-11-10', status: 'Completed' },
-        { id: 2, animal: 'Goat #B2', name: 'Rabies Shot', disease: 'Rabies', date: 'Pending', nextDue: '2026-05-15', status: 'Pending' },
-      ]);
+      console.error(err);
+      setError(err.message || 'Could not fetch vaccine records.');
     } finally {
       setLoading(false);
     }
@@ -32,6 +31,7 @@ export default function VaccinePage() {
 
   const handleVaccineSubmit = async (vaccineData) => {
     setActionLoading(true);
+    setError(null);
     try {
       if (editingVaccine) {
         await vaccinesAPI.update(editingVaccine.id, vaccineData);
@@ -42,14 +42,8 @@ export default function VaccinePage() {
       setShowVaccineModal(false);
       setEditingVaccine(null);
     } catch (err) {
-      // Fallback local modification
-      if (editingVaccine) {
-        setVaccines(prev => prev.map(v => v.id === editingVaccine.id ? { ...vaccineData, id: v.id } : v));
-      } else {
-        setVaccines(prev => [...prev, { ...vaccineData, id: Date.now() }]);
-      }
-      setShowVaccineModal(false);
-      setEditingVaccine(null);
+      console.error(err);
+      setError(err.message || 'Failed to save vaccine record.');
     } finally {
       setActionLoading(false);
     }
@@ -57,11 +51,13 @@ export default function VaccinePage() {
 
   const deleteVaccine = async (id) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
+      setError(null);
       try {
         await vaccinesAPI.delete(id);
         await fetchVaccines();
       } catch (err) {
-        setVaccines(prev => prev.filter(v => v.id !== id));
+        console.error(err);
+        setError(err.message || 'Failed to delete vaccine record.');
       }
     }
   };
@@ -72,6 +68,15 @@ export default function VaccinePage() {
   };
 
   if (loading) return <div className="dashboard-view"><p>Loading records...</p></div>;
+  if (error) return (
+    <div className="dashboard-view">
+      <div className="error-alert">
+        <h3>Connection Error</h3>
+        <p>{error}</p>
+        <button className="btn-primary-small" onClick={fetchVaccines}>Retry Connection</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="dashboard-view">

@@ -9,28 +9,17 @@ export default function FarmsPage() {
   const [showAddFarmModal, setShowAddFarmModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchFarms = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await farmsAPI.getAll();
       setFarms(data);
     } catch (err) {
-      // Mock data fallback
-      setFarms([
-        { 
-          id: 1, 
-          name: "Fatima's Farm", 
-          owner: "Fatima Ahmed", 
-          location: "Kaduna State",
-          yearEstablished: "2021",
-          totalAnimals: 105,
-          numVaccinated: 88,
-          manager: "Fatima Ahmed",
-          animals: { cows: 45, goats: 32, sheep: 28 },
-          notes: "All animals vaccinated and eating well."
-        }
-      ]);
+      console.error(err);
+      setError(err.message || 'Could not fetch farms from the database.');
     } finally {
       setLoading(false);
     }
@@ -42,29 +31,29 @@ export default function FarmsPage() {
 
   const handleAddFarm = async (farmData) => {
     setActionLoading(true);
+    setError(null);
     try {
       await farmsAPI.create(farmData);
       await fetchFarms();
       setShowAddFarmModal(false);
     } catch (err) {
-      // Mock addition
-      const mockFarm = {
-        id: Date.now(),
-        ...farmData,
-        animals: {
-          cows: Math.round(farmData.totalAnimals * 0.4),
-          goats: Math.round(farmData.totalAnimals * 0.3),
-          sheep: Math.round(farmData.totalAnimals * 0.3)
-        }
-      };
-      setFarms(prev => [...prev, mockFarm]);
-      setShowAddFarmModal(false);
+      console.error(err);
+      setError(err.message || 'Failed to create new farm.');
     } finally {
       setActionLoading(false);
     }
   };
 
   if (loading) return <div className="dashboard-view"><p>Loading farms...</p></div>;
+  if (error) return (
+    <div className="dashboard-view">
+      <div className="error-alert">
+        <h3>Connection Error</h3>
+        <p>{error}</p>
+        <button className="btn-primary-small" onClick={fetchFarms}>Retry Connection</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="dashboard-view">
