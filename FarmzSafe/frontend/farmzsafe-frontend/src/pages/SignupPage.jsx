@@ -29,9 +29,8 @@ export default function SignupPage() {
       login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {
-      // Fallback mock signup while backend is not yet connected
-      login({ name: form.name, role: form.role, email: form.email }, 'mock-token');
-      navigate('/dashboard');
+      console.error(err);
+      setError(err.message || 'Registration failed. Email might already exist.');
     } finally {
       setLoading(false);
     }

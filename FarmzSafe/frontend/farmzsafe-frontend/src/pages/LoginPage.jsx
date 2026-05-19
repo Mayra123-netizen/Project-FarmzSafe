@@ -29,9 +29,8 @@ export default function LoginPage() {
       login(data.user, data.token);
       navigate('/dashboard');
     } catch (err) {
-      // Fallback: allow mock login while backend is not connected
-      login({ name: email.split('@')[0], role, email }, 'mock-token');
-      navigate('/dashboard');
+      console.error(err);
+      setError(err.message || 'Invalid email, password, or role.');
     } finally {
       setLoading(false);
     }
