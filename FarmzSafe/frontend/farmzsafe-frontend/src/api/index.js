@@ -3,7 +3,20 @@
 // Handles all communication with the Express backend.
 // =======================================================
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1') {
+      return 'https://backend-blond-nine.vercel.app/api';
+    }
+  }
+  return 'http://localhost:5000/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem('farmzsafe_token');
