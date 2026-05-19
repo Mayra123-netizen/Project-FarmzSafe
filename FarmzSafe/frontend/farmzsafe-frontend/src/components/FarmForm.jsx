@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const ANIMAL_TYPES = ['Mixed (multiple types)', 'Cattle', 'Poultry', 'Goats', 'Sheep'];
 
@@ -6,6 +6,9 @@ const EMPTY = {
   name: '', location: '', yearEstablished: '',
   animalType: 'Mixed (multiple types)',
   totalAnimals: '', numVaccinated: '', numSick: '0',
+  cowsCount: '0', cowsVaccinated: '0', cowsSick: '0',
+  goatsCount: '0', goatsVaccinated: '0', goatsSick: '0',
+  sheepCount: '0', sheepVaccinated: '0', sheepSick: '0',
   manager: '', notes: ''
 };
 
@@ -16,6 +19,33 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
   });
 
   const set = (field) => (e) => setForm(prev => ({ ...prev, [field]: e.target.value }));
+
+  useEffect(() => {
+    if (form.animalType === 'Mixed (multiple types)') {
+      const total = Number(form.cowsCount || 0) + Number(form.goatsCount || 0) + Number(form.sheepCount || 0);
+      const vac = Number(form.cowsVaccinated || 0) + Number(form.goatsVaccinated || 0) + Number(form.sheepVaccinated || 0);
+      const sick = Number(form.cowsSick || 0) + Number(form.goatsSick || 0) + Number(form.sheepSick || 0);
+
+      if (
+        Number(form.totalAnimals) !== total ||
+        Number(form.numVaccinated) !== vac ||
+        Number(form.numSick) !== sick
+      ) {
+        setForm(prev => ({
+          ...prev,
+          totalAnimals: String(total),
+          numVaccinated: String(vac),
+          numSick: String(sick)
+        }));
+      }
+    }
+  }, [
+    form.animalType,
+    form.cowsCount, form.cowsVaccinated, form.cowsSick,
+    form.goatsCount, form.goatsVaccinated, form.goatsSick,
+    form.sheepCount, form.sheepVaccinated, form.sheepSick,
+    form.totalAnimals, form.numVaccinated, form.numSick
+  ]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,18 +81,72 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
           </select>
         </div>
 
+        {form.animalType === 'Mixed (multiple types)' && (
+          <div className="livestock-breakdown-section" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '16px', marginBottom: '1.25rem', border: '1px dashed var(--border)' }}>
+            <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem', fontWeight: 700 }}>Enter counts for each livestock type:</h4>
+            
+            {/* Cows Breakdown */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🐄 Cattle</span>
+              <input type="number" placeholder="Total" value={form.cowsCount} onChange={set('cowsCount')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+              <input type="number" placeholder="Vac." value={form.cowsVaccinated} onChange={set('cowsVaccinated')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+              <input type="number" placeholder="Sick" value={form.cowsSick} onChange={set('cowsSick')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+            </div>
+
+            {/* Goats Breakdown */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🐐 Goats</span>
+              <input type="number" placeholder="Total" value={form.goatsCount} onChange={set('goatsCount')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+              <input type="number" placeholder="Vac." value={form.goatsVaccinated} onChange={set('goatsVaccinated')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+              <input type="number" placeholder="Sick" value={form.goatsSick} onChange={set('goatsSick')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+            </div>
+
+            {/* Sheep Breakdown */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🐑 Sheep</span>
+              <input type="number" placeholder="Total" value={form.sheepCount} onChange={set('sheepCount')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+              <input type="number" placeholder="Vac." value={form.sheepVaccinated} onChange={set('sheepVaccinated')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+              <input type="number" placeholder="Sick" value={form.sheepSick} onChange={set('sheepSick')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+            </div>
+          </div>
+        )}
+
         <div className="form-group-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
           <div className="form-group" style={{ margin: 0 }}>
             <label>Total Animals</label>
-            <input type="number" placeholder="e.g. 100" value={form.totalAnimals} onChange={set('totalAnimals')} required />
+            <input
+              type="number"
+              placeholder="e.g. 100"
+              value={form.totalAnimals}
+              onChange={set('totalAnimals')}
+              readOnly={form.animalType === 'Mixed (multiple types)'}
+              style={form.animalType === 'Mixed (multiple types)' ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : {}}
+              required
+            />
           </div>
           <div className="form-group" style={{ margin: 0 }}>
             <label>Vaccinated</label>
-            <input type="number" placeholder="e.g. 85" value={form.numVaccinated} onChange={set('numVaccinated')} required />
+            <input
+              type="number"
+              placeholder="e.g. 85"
+              value={form.numVaccinated}
+              onChange={set('numVaccinated')}
+              readOnly={form.animalType === 'Mixed (multiple types)'}
+              style={form.animalType === 'Mixed (multiple types)' ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : {}}
+              required
+            />
           </div>
           <div className="form-group" style={{ margin: 0 }}>
             <label>Sick / Ill</label>
-            <input type="number" placeholder="e.g. 0" value={form.numSick} onChange={set('numSick')} required />
+            <input
+              type="number"
+              placeholder="e.g. 0"
+              value={form.numSick}
+              onChange={set('numSick')}
+              readOnly={form.animalType === 'Mixed (multiple types)'}
+              style={form.animalType === 'Mixed (multiple types)' ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : {}}
+              required
+            />
           </div>
         </div>
 

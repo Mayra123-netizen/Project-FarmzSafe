@@ -80,19 +80,28 @@ export const farmsAPI = {
           else if (t === 'sheep') animalType = 'Sheep';
         }
 
-        const animalsObj = f.animals ? f.animals.reduce((acc, a) => {
-          const key = a.type.toLowerCase();
-          if (key === 'cows' || key === 'cattle' || key === 'cow') {
-            acc.cows = (acc.cows || 0) + (a.count || 0);
-          } else if (key === 'goats' || key === 'goat') {
-            acc.goats = (acc.goats || 0) + (a.count || 0);
-          } else if (key === 'sheep') {
-            acc.sheep = (acc.sheep || 0) + (a.count || 0);
-          } else {
-            acc.cows = (acc.cows || 0) + (a.count || 0);
-          }
-          return acc;
-        }, { cows: 0, goats: 0, sheep: 0 }) : { cows: 0, goats: 0, sheep: 0 };
+        let cowsCount = 0, cowsVaccinated = 0, cowsSick = 0;
+        let goatsCount = 0, goatsVaccinated = 0, goatsSick = 0;
+        let sheepCount = 0, sheepVaccinated = 0, sheepSick = 0;
+
+        if (f.animals) {
+          f.animals.forEach(a => {
+            const key = a.type.toLowerCase();
+            if (key === 'cows' || key === 'cattle' || key === 'cow') {
+              cowsCount = a.count || 0;
+              cowsVaccinated = a.vaccinatedAnimalCount || 0;
+              cowsSick = a.sickAnimalCount || 0;
+            } else if (key === 'goats' || key === 'goat') {
+              goatsCount = a.count || 0;
+              goatsVaccinated = a.vaccinatedAnimalCount || 0;
+              goatsSick = a.sickAnimalCount || 0;
+            } else if (key === 'sheep') {
+              sheepCount = a.count || 0;
+              sheepVaccinated = a.vaccinatedAnimalCount || 0;
+              sheepSick = a.sickAnimalCount || 0;
+            }
+          });
+        }
 
         return {
           id: f._id,
@@ -103,7 +112,10 @@ export const farmsAPI = {
           numVaccinated: vac || 0,
           numSick: sick || 0,
           animalType,
-          animals: animalsObj,
+          cowsCount, cowsVaccinated, cowsSick,
+          goatsCount, goatsVaccinated, goatsSick,
+          sheepCount, sheepVaccinated, sheepSick,
+          animals: { cows: cowsCount, goats: goatsCount, sheep: sheepCount },
           breakdown: f.animals || [],
           notes: ''
         };
@@ -127,19 +139,28 @@ export const farmsAPI = {
       else if (t === 'sheep') animalType = 'Sheep';
     }
 
-    const animalsObj = f.animals ? f.animals.reduce((acc, a) => {
-      const key = a.type.toLowerCase();
-      if (key === 'cows' || key === 'cattle' || key === 'cow') {
-        acc.cows = (acc.cows || 0) + (a.count || 0);
-      } else if (key === 'goats' || key === 'goat') {
-        acc.goats = (acc.goats || 0) + (a.count || 0);
-      } else if (key === 'sheep') {
-        acc.sheep = (acc.sheep || 0) + (a.count || 0);
-      } else {
-        acc.cows = (acc.cows || 0) + (a.count || 0);
-      }
-      return acc;
-    }, { cows: 0, goats: 0, sheep: 0 }) : { cows: 0, goats: 0, sheep: 0 };
+    let cowsCount = 0, cowsVaccinated = 0, cowsSick = 0;
+    let goatsCount = 0, goatsVaccinated = 0, goatsSick = 0;
+    let sheepCount = 0, sheepVaccinated = 0, sheepSick = 0;
+
+    if (f.animals) {
+      f.animals.forEach(a => {
+        const key = a.type.toLowerCase();
+        if (key === 'cows' || key === 'cattle' || key === 'cow') {
+          cowsCount = a.count || 0;
+          cowsVaccinated = a.vaccinatedAnimalCount || 0;
+          cowsSick = a.sickAnimalCount || 0;
+        } else if (key === 'goats' || key === 'goat') {
+          goatsCount = a.count || 0;
+          goatsVaccinated = a.vaccinatedAnimalCount || 0;
+          goatsSick = a.sickAnimalCount || 0;
+        } else if (key === 'sheep') {
+          sheepCount = a.count || 0;
+          sheepVaccinated = a.vaccinatedAnimalCount || 0;
+          sheepSick = a.sickAnimalCount || 0;
+        }
+      });
+    }
 
     return {
       id: f._id,
@@ -150,7 +171,10 @@ export const farmsAPI = {
       numVaccinated: vac,
       numSick: sick,
       animalType,
-      animals: animalsObj,
+      cowsCount, cowsVaccinated, cowsSick,
+      goatsCount, goatsVaccinated, goatsSick,
+      sheepCount, sheepVaccinated, sheepSick,
+      animals: { cows: cowsCount, goats: goatsCount, sheep: sheepCount },
       breakdown: f.animals || [],
       notes: ''
     };
@@ -165,14 +189,24 @@ export const farmsAPI = {
     } else if (type === 'Cattle') {
       animalsList = [{ type: 'Cows', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else {
-      const count = Math.floor(Number(data.totalAnimals) / 3);
-      const vac = Math.floor(Number(data.numVaccinated) / 3);
-      const sickVal = Math.floor(Number(data.numSick || 0) / 3);
+      // Mixed
       animalsList = [
-        { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-        { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-        { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
-      ];
+        { type: 'Cows', count: Number(data.cowsCount || 0), vaccinatedAnimalCount: Number(data.cowsVaccinated || 0), sickAnimalCount: Number(data.cowsSick || 0) },
+        { type: 'Goats', count: Number(data.goatsCount || 0), vaccinatedAnimalCount: Number(data.goatsVaccinated || 0), sickAnimalCount: Number(data.goatsSick || 0) },
+        { type: 'Sheep', count: Number(data.sheepCount || 0), vaccinatedAnimalCount: Number(data.sheepVaccinated || 0), sickAnimalCount: Number(data.sheepSick || 0) }
+      ].filter(a => a.count > 0 || a.vaccinatedAnimalCount > 0 || a.sickAnimalCount > 0);
+
+      // Fallback in case they submit zeros for all categories but entered a general total
+      if (animalsList.length === 0 && Number(data.totalAnimals) > 0) {
+        const count = Math.floor(Number(data.totalAnimals) / 3);
+        const vac = Math.floor(Number(data.numVaccinated) / 3);
+        const sickVal = Math.floor(Number(data.numSick || 0) / 3);
+        animalsList = [
+          { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
+        ];
+      }
     }
 
     const ownerId = getUserId() || "664c12345678901234567890";
@@ -195,14 +229,24 @@ export const farmsAPI = {
     } else if (type === 'Cattle') {
       animalsList = [{ type: 'Cows', count: Number(data.totalAnimals), vaccinatedAnimalCount: Number(data.numVaccinated), sickAnimalCount: Number(data.numSick || 0) }];
     } else {
-      const count = Math.floor(Number(data.totalAnimals) / 3);
-      const vac = Math.floor(Number(data.numVaccinated) / 3);
-      const sickVal = Math.floor(Number(data.numSick || 0) / 3);
+      // Mixed
       animalsList = [
-        { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-        { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-        { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
-      ];
+        { type: 'Cows', count: Number(data.cowsCount || 0), vaccinatedAnimalCount: Number(data.cowsVaccinated || 0), sickAnimalCount: Number(data.cowsSick || 0) },
+        { type: 'Goats', count: Number(data.goatsCount || 0), vaccinatedAnimalCount: Number(data.goatsVaccinated || 0), sickAnimalCount: Number(data.goatsSick || 0) },
+        { type: 'Sheep', count: Number(data.sheepCount || 0), vaccinatedAnimalCount: Number(data.sheepVaccinated || 0), sickAnimalCount: Number(data.sheepSick || 0) }
+      ].filter(a => a.count > 0 || a.vaccinatedAnimalCount > 0 || a.sickAnimalCount > 0);
+
+      // Fallback
+      if (animalsList.length === 0 && Number(data.totalAnimals) > 0) {
+        const count = Math.floor(Number(data.totalAnimals) / 3);
+        const vac = Math.floor(Number(data.numVaccinated) / 3);
+        const sickVal = Math.floor(Number(data.numSick || 0) / 3);
+        animalsList = [
+          { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
+        ];
+      }
     }
 
     const ownerId = getUserId() || "664c12345678901234567890";
