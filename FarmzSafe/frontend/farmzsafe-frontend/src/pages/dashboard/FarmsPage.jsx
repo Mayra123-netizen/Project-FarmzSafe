@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { farmsAPI } from '../../api';
 import FarmForm from '../../components/FarmForm';
+import { useAuth } from '../../context/AuthContext';
 
 export default function FarmsPage() {
+  const { user } = useAuth();
   const [farms, setFarms] = useState([]);
   const [selectedFarm, setSelectedFarm] = useState(null);
   const [showAddFarmModal, setShowAddFarmModal] = useState(false);
@@ -62,9 +64,11 @@ export default function FarmsPage() {
           <h2>My Farms</h2>
           <p className="sub">{farms.length} registered farms - click a farm to view its report</p>
         </div>
-        <button className="btn-primary-small" onClick={() => setShowAddFarmModal(true)}>
-          <Plus size={16} /> Add new farm
-        </button>
+        {user?.role === 'Owner' && (
+          <button className="btn-primary-small" onClick={() => setShowAddFarmModal(true)}>
+            <Plus size={16} /> Add new farm
+          </button>
+        )}
       </div>
 
       {selectedFarm ? (

@@ -278,6 +278,9 @@ export const reportsAPI = {
         casualties: 0,
         monthlySummary: data.map(r => ({
           id: r._id,
+          title: r.title,
+          description: r.description || '',
+          fileUrl: r.fileUrl || '',
           farmName: r.title || 'General Report',
           animalType: 'All',
           casualties: 0,
@@ -288,5 +291,14 @@ export const reportsAPI = {
     } catch {
       return { successfulChecks: 0, casualties: 0, monthlySummary: [] };
     }
+  },
+  create: async (data) => {
+    return request('/Report/addReport', { method: 'POST', body: JSON.stringify(data) });
+  },
+  update: async (id, data) => {
+    return request(`/Report/editReport/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+  },
+  delete: async (id) => {
+    return request(`/Report/deleteReport/${id}`, { method: 'DELETE' });
   }
 };

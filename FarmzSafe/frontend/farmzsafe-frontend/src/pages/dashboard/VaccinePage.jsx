@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { vaccinesAPI } from '../../api';
 import VaccineForm from '../../components/VaccineForm';
+import { useAuth } from '../../context/AuthContext';
 
 export default function VaccinePage() {
+  const { user } = useAuth();
   const [vaccines, setVaccines] = useState([]);
   const [showVaccineModal, setShowVaccineModal] = useState(false);
   const [editingVaccine, setEditingVaccine] = useState(null);
@@ -82,9 +84,11 @@ export default function VaccinePage() {
     <div className="dashboard-view">
       <div className="section-header">
         <h2>Vaccination Records</h2>
-        <button className="btn-primary-small" onClick={() => { setEditingVaccine(null); setShowVaccineModal(true); }}>
-          <Plus size={16} /> Add Record
-        </button>
+        {user?.role === 'Owner' && (
+          <button className="btn-primary-small" onClick={() => { setEditingVaccine(null); setShowVaccineModal(true); }}>
+            <Plus size={16} /> Add Record
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -97,7 +101,7 @@ export default function VaccinePage() {
               <th>Date</th>
               <th>Next Due</th>
               <th>Status</th>
-              <th>Actions</th>
+              {user?.role === 'Owner' && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -109,10 +113,12 @@ export default function VaccinePage() {
                 <td>{v.date}</td>
                 <td>{v.nextDue}</td>
                 <td><span className={v.status === 'Completed' ? 'badge-success' : 'badge-pending'}>{v.status}</span></td>
-                <td className="actions-cell">
-                  <button className="text-btn edit" onClick={() => startEditVaccine(v)}>Edit</button>
-                  <button className="text-btn delete" onClick={() => deleteVaccine(v.id)}>Delete</button>
-                </td>
+                {user?.role === 'Owner' && (
+                  <td className="actions-cell">
+                    <button className="text-btn edit" onClick={() => startEditVaccine(v)}>Edit</button>
+                    <button className="text-btn delete" onClick={() => deleteVaccine(v.id)}>Delete</button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
