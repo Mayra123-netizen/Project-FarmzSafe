@@ -15,6 +15,32 @@ export default function ReportsPage() {
   const [form, setForm] = useState({ title: '', description: '', fileUrl: '' });
   const [actionLoading, setActionLoading] = useState(false);
 
+  // File Upload states
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [fileName, setFileName] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setFileName(file.name);
+    setUploading(true);
+    setUploadProgress(0);
+
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setUploading(false);
+          setForm(p => ({ ...p, fileUrl: `https://project-farm-lovat.vercel.app/uploads/reports/${file.name}` }));
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 150);
+  };
+
   const fetchReports = async () => {
     setLoading(true);
     setError(null);
@@ -35,12 +61,18 @@ export default function ReportsPage() {
 
   const handleOpenAdd = () => {
     setForm({ title: '', description: '', fileUrl: '' });
+    setFileName('');
+    setUploading(false);
+    setUploadProgress(0);
     setModalMode('add');
     setShowModal(true);
   };
 
   const handleOpenEdit = (report) => {
     setForm({ title: report.title, description: report.description, fileUrl: report.fileUrl });
+    setFileName(report.fileUrl ? report.fileUrl.split('/').pop() : '');
+    setUploading(false);
+    setUploadProgress(0);
     setSelectedReportId(report.id);
     setModalMode('edit');
     setShowModal(true);
@@ -94,9 +126,9 @@ export default function ReportsPage() {
           <h2>Reports & Health Logs</h2>
           <p className="sub">Manage livestock health records and safety reports</p>
         </div>
-        {user?.role === 'Owner' && (
+        {(user?.role === 'Owner' || user?.role === 'Employee') && (
           <button className="btn-primary-small" onClick={handleOpenAdd}>
-            Create Report
+            Upload Report
           </button>
         )}
       </div>
@@ -122,13 +154,13 @@ export default function ReportsPage() {
               <th>Title / Farm</th>
               <th>Description</th>
               <th>Document / Reference</th>
-              {user?.role === 'Owner' && <th style={{ width: '120px' }}>Actions</th>}
+              {(user?.role === 'Owner' || user?.role === 'Employee') && <th style={{ width: '120px' }}>Actions</th>}
             </tr>
           </thead>
           <tbody>
             {reports?.monthlySummary.length === 0 ? (
               <tr>
-                <td colSpan={user?.role === 'Owner' ? 4 : 3} style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                <td colSpan={(user?.role === 'Owner' || user?.role === 'Employee') ? 4 : 3} style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                   No reports logged yet.
                 </td>
               </tr>
@@ -138,7 +170,7 @@ export default function ReportsPage() {
                   <td><strong>{row.title}</strong></td>
                   <td>{row.description}</td>
                   <td>{row.fileUrl ? <a href={row.fileUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--primary-color)' }}>{row.fileUrl}</a> : 'N/A'}</td>
-                  {user?.role === 'Owner' && (
+                  {(user?.role === 'Owner' || user?.role === 'Employee') && (
                     <td>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button className="btn-text" style={{ padding: 0, color: 'var(--primary-color)' }} onClick={() => handleOpenEdit(row)}>Edit</button>
@@ -158,7 +190,7 @@ export default function ReportsPage() {
           <div className="modal-content">
             <form onSubmit={handleSubmit}>
               <div className="modal-header">
-                <h3>{modalMode === 'add' ? 'Create New Report' : 'Edit Report'}</h3>
+                <h3>{modalMode === 'add' ? 'Upload New Report' : 'Edit Report'}</h3>
               </div>
               <div className="modal-body">
                 <div className="form-group">
@@ -180,6 +212,43 @@ export default function ReportsPage() {
                     rows={4}
                   />
                 </div>
+
+                <div className="form-group">
+                  <label>Upload Report Document</label>
+                  <div className="file-upload-zone" style={{ border: '2px dashed var(--border)', borderRadius: '12px', padding: '1.5rem', textAlign: 'center', background: 'var(--bg-card)', cursor: 'pointer', position: 'relative', marginBottom: '1rem' }}>
+                    <input 
+                      type="file" 
+                      onChange={handleFileChange} 
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} 
+                    />
+                    {uploading ? (
+                      <div className="upload-progress-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary-color)' }}>Uploading {fileName}...</span>
+                        <div className="progress-track" style={{ width: '100%', height: '6px', background: '#e0e0e0', borderRadius: '4px', marginTop: '0.5rem', overflow: 'hidden' }}>
+                          <div className="progress-fill" style={{ width: `${uploadProgress}%`, height: '100%', background: 'var(--primary-color)', transition: 'width 0.1s linear' }}></div>
+                        </div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{uploadProgress}%</span>
+                      </div>
+                    ) : form.fileUrl ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ color: '#2d5a27', fontWeight: 600 }}>✓ File Uploaded Successfully</span>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>{fileName || form.fileUrl.split('/').pop()}</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--primary-color)', textDecoration: 'underline', marginTop: '0.5rem' }}>Click or drag to change file</span>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '0.5rem' }}>
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="17 8 12 3 7 8"/>
+                          <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Drag and drop report PDF/image here</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>or click to browse local files</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="form-group">
                   <label>Document URL / File Reference (optional)</label>
                   <input

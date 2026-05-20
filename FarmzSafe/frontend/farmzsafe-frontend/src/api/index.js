@@ -279,7 +279,7 @@ export const vaccinesAPI = {
           disease: v.diseaseName || '',
           date: v.createdAt ? new Date(v.createdAt).toISOString().split('T')[0] : 'Completed',
           nextDue: v.expiryDate ? new Date(v.expiryDate).toISOString().split('T')[0] : '',
-          status: v.IsAvailable ? 'Completed' : 'Pending',
+          status: v.IsAvailable ? 'Available' : 'Unavailable',
         };
       });
     } catch (err) {
@@ -291,7 +291,7 @@ export const vaccinesAPI = {
     const backendData = {
       vaccineName: `${data.name} | ${data.animal}`,
       diseaseName: data.disease,
-      IsAvailable: data.status === 'Completed',
+      IsAvailable: data.status === 'Available',
       stock: 100,
       expiryDate: data.nextDue ? new Date(data.nextDue) : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)
     };
@@ -301,7 +301,7 @@ export const vaccinesAPI = {
     const backendData = {
       vaccineName: `${data.name} | ${data.animal}`,
       diseaseName: data.disease,
-      IsAvailable: data.status === 'Completed',
+      IsAvailable: data.status === 'Available',
       stock: 100,
       expiryDate: data.nextDue ? new Date(data.nextDue) : new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)
     };
