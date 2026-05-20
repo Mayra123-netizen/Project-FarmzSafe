@@ -59,7 +59,7 @@ export const authAPI = {
     const res = await request('/Users/Signup', { method: 'POST', body: JSON.stringify(data) });
     return res;
   },
-  forgotPassword: (data) => Promise.resolve({ success: true }),
+ 
 };
 
 // ── Farms (routes: /api/farms) ──────────────────────────

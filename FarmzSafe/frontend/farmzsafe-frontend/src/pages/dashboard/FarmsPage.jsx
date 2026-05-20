@@ -156,7 +156,7 @@ export default function FarmsPage() {
             <div key={farm.id} className="farm-card-detailed clickable" onClick={() => setSelectedFarm(farm)}>
               <div className="farm-info">
                 <h3>{farm.name}</h3>
-                <p>{farm.location} · Est. {farm.yearEstablished || '2021'}</p>
+                <p>{farm.location} </p>
                 <div className="farm-tags">
                   <span className="tag">Cattle</span>
                   <span className="tag">Goats</span>

@@ -26,7 +26,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       const data = await authAPI.signup(form);
-      login(data.user, data.token);
+      login(data.user);
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
@@ -55,7 +55,7 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>I am a</label>
+            <label>I am an</label>
             <div className="role-selector">
               <button type="button" className={form.role === 'Owner' ? 'active' : ''} onClick={() => setForm(p => ({ ...p, role: 'Owner' }))}>Owner</button>
               <button type="button" className={form.role === 'Employee' ? 'active' : ''} onClick={() => setForm(p => ({ ...p, role: 'Employee' }))}>Employee</button>

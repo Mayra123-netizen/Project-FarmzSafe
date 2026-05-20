@@ -25,19 +25,20 @@ export default function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          
 
           {/* Protected dashboard routes */}
-          <Route element={<ProtectedRoute />}>
+          {/* <Route element={<ProtectedRoute />}>*/}
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<HomePage />} />
               <Route path="farms" element={<FarmsPage />} />
               <Route path="vaccine" element={<VaccinePage />} />
               <Route path="reports" element={<ReportsPage />} />
             </Route>
-          </Route>
-        </Routes>
+           
+         </Routes>*
       </Router>
     </AuthProvider>
   );
+  
 }
