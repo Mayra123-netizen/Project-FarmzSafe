@@ -113,31 +113,46 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
             </div>
 
             {form.animalType === 'Mixed (multiple types)' && (
-              <div className="livestock-breakdown-section" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '16px', marginBottom: '1.25rem', border: '1px dashed var(--border)' }}>
-                <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.75rem', fontWeight: 700 }}>Enter counts for each livestock type:</h4>
+              <div className="livestock-breakdown-section" style={{ background: 'rgba(0,0,0,0.02)', padding: '0.75rem', borderRadius: '12px', marginBottom: '1.25rem', border: '1px dashed var(--border)' }}>
+                {/* Header Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '95px 1fr 1fr 1fr', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem', borderBottom: '1px solid rgba(0,0,0,0.05)', paddingBottom: '0.25rem' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>Animal Class</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Total</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Vaccinated</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Sick / Ill</span>
+                </div>
                 
-                {/* Cows Breakdown */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🐄 Cattle</span>
-                  <input type="number" placeholder="Total" value={form.cowsCount} onChange={set('cowsCount')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
-                  <input type="number" placeholder="Vac." value={form.cowsVaccinated} onChange={set('cowsVaccinated')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
-                  <input type="number" placeholder="Sick" value={form.cowsSick} onChange={set('cowsSick')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+                {/* Cattle Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '95px 1fr 1fr 1fr', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
+                    <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=80&q=80" alt="Cattle" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', marginRight: '4px' }} />
+                    Cattle
+                  </span>
+                  <input type="number" placeholder="Total" value={form.cowsCount} onChange={set('cowsCount')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Vac." value={form.cowsVaccinated} onChange={set('cowsVaccinated')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Sick" value={form.cowsSick} onChange={set('cowsSick')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
                 </div>
 
-                {/* Goats Breakdown */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🐐 Goats</span>
-                  <input type="number" placeholder="Total" value={form.goatsCount} onChange={set('goatsCount')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
-                  <input type="number" placeholder="Vac." value={form.goatsVaccinated} onChange={set('goatsVaccinated')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
-                  <input type="number" placeholder="Sick" value={form.goatsSick} onChange={set('goatsSick')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+                {/* Goats Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '95px 1fr 1fr 1fr', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
+                    <img src="https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=80&q=80" alt="Goats" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', marginRight: '4px' }} />
+                    Goats
+                  </span>
+                  <input type="number" placeholder="Total" value={form.goatsCount} onChange={set('goatsCount')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Vac." value={form.goatsVaccinated} onChange={set('goatsVaccinated')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Sick" value={form.goatsSick} onChange={set('goatsSick')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
                 </div>
 
-                {/* Sheep Breakdown */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🐑 Sheep</span>
-                  <input type="number" placeholder="Total" value={form.sheepCount} onChange={set('sheepCount')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
-                  <input type="number" placeholder="Vac." value={form.sheepVaccinated} onChange={set('sheepVaccinated')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
-                  <input type="number" placeholder="Sick" value={form.sheepSick} onChange={set('sheepSick')} style={{ padding: '6px 12px', borderRadius: '30px' }} />
+                {/* Sheep Row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '95px 1fr 1fr 1fr', gap: '0.5rem', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
+                    <img src="https://images.unsplash.com/photo-1484557985045-edf25e08da73?auto=format&fit=crop&w=80&q=80" alt="Sheep" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', marginRight: '4px' }} />
+                    Sheep
+                  </span>
+                  <input type="number" placeholder="Total" value={form.sheepCount} onChange={set('sheepCount')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Vac." value={form.sheepVaccinated} onChange={set('sheepVaccinated')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Sick" value={form.sheepSick} onChange={set('sheepSick')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
                 </div>
               </div>
             )}

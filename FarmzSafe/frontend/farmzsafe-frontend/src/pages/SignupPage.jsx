@@ -48,7 +48,7 @@ export default function SignupPage() {
 
         <div className="auth-header">
           <h2>Join FarmzSafe</h2>
-          <p>Start securing your harvest today</p>
+          <p>Track. Vaccinate. Protect.</p>
         </div>
 
         {error && <p className="auth-error">{error}</p>}
