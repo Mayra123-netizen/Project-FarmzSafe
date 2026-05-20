@@ -486,6 +486,25 @@ tr:last-child td { border-bottom: none; }
 .form-group-row { display: flex; gap: 1rem; }
 .form-group-row .form-group { flex: 1; }
 
+.compact-input {
+  padding: 8px 12px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-align: center;
+  width: 100%;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.compact-input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
 /* =============================================
    HEALTH LOGS
    ============================================= */

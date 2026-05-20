@@ -128,9 +128,9 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
                     <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=80&q=80" alt="Cattle" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', marginRight: '4px' }} />
                     Cattle
                   </span>
-                  <input type="number" placeholder="Total" value={form.cowsCount} onChange={set('cowsCount')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
-                  <input type="number" placeholder="Vac." value={form.cowsVaccinated} onChange={set('cowsVaccinated')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
-                  <input type="number" placeholder="Sick" value={form.cowsSick} onChange={set('cowsSick')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Total" value={form.cowsCount} onChange={set('cowsCount')} className="compact-input" />
+                  <input type="number" placeholder="Vac." value={form.cowsVaccinated} onChange={set('cowsVaccinated')} className="compact-input" />
+                  <input type="number" placeholder="Sick" value={form.cowsSick} onChange={set('cowsSick')} className="compact-input" />
                 </div>
 
                 {/* Goats Row */}
@@ -139,9 +139,9 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
                     <img src="https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=80&q=80" alt="Goats" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', marginRight: '4px' }} />
                     Goats
                   </span>
-                  <input type="number" placeholder="Total" value={form.goatsCount} onChange={set('goatsCount')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
-                  <input type="number" placeholder="Vac." value={form.goatsVaccinated} onChange={set('goatsVaccinated')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
-                  <input type="number" placeholder="Sick" value={form.goatsSick} onChange={set('goatsSick')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Total" value={form.goatsCount} onChange={set('goatsCount')} className="compact-input" />
+                  <input type="number" placeholder="Vac." value={form.goatsVaccinated} onChange={set('goatsVaccinated')} className="compact-input" />
+                  <input type="number" placeholder="Sick" value={form.goatsSick} onChange={set('goatsSick')} className="compact-input" />
                 </div>
 
                 {/* Sheep Row */}
@@ -150,9 +150,9 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
                     <img src="https://images.unsplash.com/photo-1484557985045-edf25e08da73?auto=format&fit=crop&w=80&q=80" alt="Sheep" style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', marginRight: '4px' }} />
                     Sheep
                   </span>
-                  <input type="number" placeholder="Total" value={form.sheepCount} onChange={set('sheepCount')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
-                  <input type="number" placeholder="Vac." value={form.sheepVaccinated} onChange={set('sheepVaccinated')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
-                  <input type="number" placeholder="Sick" value={form.sheepSick} onChange={set('sheepSick')} style={{ padding: '4px 8px', borderRadius: '30px', fontSize: '0.8rem', textAlign: 'center' }} />
+                  <input type="number" placeholder="Total" value={form.sheepCount} onChange={set('sheepCount')} className="compact-input" />
+                  <input type="number" placeholder="Vac." value={form.sheepVaccinated} onChange={set('sheepVaccinated')} className="compact-input" />
+                  <input type="number" placeholder="Sick" value={form.sheepSick} onChange={set('sheepSick')} className="compact-input" />
                 </div>
               </div>
             )}
