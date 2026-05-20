@@ -84,7 +84,7 @@ export default function VaccinePage() {
     <div className="dashboard-view">
       <div className="section-header">
         <h2>Vaccination Records</h2>
-        {user?.role === 'Owner' && (
+        {(user?.role === 'Owner' || user?.role === 'Employee') && (
           <button className="btn-primary-small" onClick={() => { setEditingVaccine(null); setShowVaccineModal(true); }}>
             <Plus size={16} /> Add Record
           </button>
@@ -101,7 +101,7 @@ export default function VaccinePage() {
               <th>Date</th>
               <th>Next Due</th>
               <th>Status</th>
-              {user?.role === 'Owner' && <th>Actions</th>}
+              {(user?.role === 'Owner' || user?.role === 'Employee') && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -112,8 +112,8 @@ export default function VaccinePage() {
                 <td>{v.disease}</td>
                 <td>{v.date}</td>
                 <td>{v.nextDue}</td>
-                <td><span className={v.status === 'Completed' ? 'badge-success' : 'badge-pending'}>{v.status}</span></td>
-                {user?.role === 'Owner' && (
+                <td><span className={v.status === 'Available' ? 'badge-success' : 'badge-pending'}>{v.status}</span></td>
+                {(user?.role === 'Owner' || user?.role === 'Employee') && (
                   <td className="actions-cell">
                     <button className="text-btn edit" onClick={() => startEditVaccine(v)}>Edit</button>
                     <button className="text-btn delete" onClick={() => deleteVaccine(v.id)}>Delete</button>

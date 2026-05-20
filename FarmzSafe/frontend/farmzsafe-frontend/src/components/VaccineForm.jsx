@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const VACCINES = ['Anthrax Vaccine', 'Foot and Mouth Disease', 'Rabies Shot', 'Brucellosis', 'Newcastle Disease'];
-const EMPTY = { animal: '', name: '', disease: '', date: '', nextDue: '', status: 'Pending' };
+const EMPTY = { animal: '', name: '', disease: '', date: '', nextDue: '', status: 'Available' };
 
 export default function VaccineForm({ onSubmit, onCancel, initial = EMPTY, loading }) {
   const [form, setForm] = useState(initial);
@@ -46,8 +46,8 @@ export default function VaccineForm({ onSubmit, onCancel, initial = EMPTY, loadi
         <div className="form-group">
           <label>Status</label>
           <select value={form.status} onChange={set('status')}>
-            <option value="Pending">Pending</option>
-            <option value="Completed">Completed</option>
+            <option value="Available">Available</option>
+            <option value="Unavailable">Unavailable</option>
           </select>
         </div>
       </div>

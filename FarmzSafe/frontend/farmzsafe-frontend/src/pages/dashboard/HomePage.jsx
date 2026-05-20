@@ -6,6 +6,20 @@ import { farmsAPI, vaccinesAPI } from '../../api';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
+const CHART_COLORS = [
+  '#2d5a27', // Forest Green
+  '#3f51b5', // Indigo
+  '#ff9800', // Amber/Orange
+  '#9c27b0', // Deep Purple
+  '#00bcd4', // Cyan
+  '#e91e63', // Pink
+  '#4caf50', // Emerald Green
+  '#009688', // Teal
+  '#ff5722', // Deep Orange
+  '#673ab7'  // Purple
+];
+
+
 export default function HomePage() {
   const { user } = useAuth();
   const [farms, setFarms] = useState([]);
@@ -144,7 +158,7 @@ export default function HomePage() {
                   datasets: [{
                     label: 'Vaccinated Animals',
                     data: farms.map(f => f.numVaccinated),
-                    backgroundColor: '#2d5a27',
+                    backgroundColor: farms.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]),
                     borderRadius: 4
                   }]
                 }}

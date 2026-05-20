@@ -64,7 +64,7 @@ export default function FarmsPage() {
           <h2>My Farms</h2>
           <p className="sub">{farms.length} registered farms - click a farm to view its report</p>
         </div>
-        {user?.role === 'Owner' && (
+        {(user?.role === 'Owner' || user?.role === 'Employee') && (
           <button className="btn-primary-small" onClick={() => setShowAddFarmModal(true)}>
             <Plus size={16} /> Add new farm
           </button>
