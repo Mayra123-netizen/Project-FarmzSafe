@@ -64,7 +64,7 @@ export default function SignupPage() {
 
           <div className="form-group">
             <label>Full Name</label>
-            <input type="text" placeholder="e.g. Fatima Ahmed" value={form.name} onChange={set('name')} required />
+            <input type="text" placeholder="Write your name" value={form.name} onChange={set('name')} required />
           </div>
 
           <div className="form-group">
@@ -74,7 +74,7 @@ export default function SignupPage() {
 
           <div className="form-group">
             <label>Password</label>
-            <input type="password" placeholder="Min. 8 characters" value={form.password} onChange={set('password')} minLength={8} required />
+            <input type="password" placeholder="Minimum, 8 characters" value={form.password} onChange={set('password')} minLength={8} required />
           </div>
 
           {form.role === 'Owner' && (
