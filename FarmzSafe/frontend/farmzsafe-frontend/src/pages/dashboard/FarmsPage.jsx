@@ -158,9 +158,15 @@ export default function FarmsPage() {
                 <h3>{farm.name}</h3>
                 <p>{farm.location} </p>
                 <div className="farm-tags">
-                  <span className="tag">Cattle</span>
-                  <span className="tag">Goats</span>
-                  <span className="tag">Sheep</span>
+                  {farm.breakdown && farm.breakdown.length > 0 ? (
+                    farm.breakdown.map((anim, idx) => (
+                      <span key={idx} className="tag" style={{ textTransform: 'capitalize' }}>
+                        {anim.type}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="tag" style={{ textTransform: 'capitalize' }}>{farm.animalType}</span>
+                  )}
                 </div>
               </div>
               <div className="farm-stats-summary">

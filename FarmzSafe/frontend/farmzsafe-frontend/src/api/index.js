@@ -78,29 +78,32 @@ export const farmsAPI = {
           if (t === 'cows' || t === 'cattle' || t === 'cow') animalType = 'Cattle';
           else if (t === 'goats' || t === 'goat') animalType = 'Goats';
           else if (t === 'sheep') animalType = 'Sheep';
+          else animalType = f.animals[0].type;
         }
 
-        let cowsCount = 0, cowsVaccinated = 0, cowsSick = 0;
-        let goatsCount = 0, goatsVaccinated = 0, goatsSick = 0;
-        let sheepCount = 0, sheepVaccinated = 0, sheepSick = 0;
+        let cowsLabel = 'Cattle', cowsCount = 0, cowsVaccinated = 0, cowsSick = 0;
+        let goatsLabel = 'Goats', goatsCount = 0, goatsVaccinated = 0, goatsSick = 0;
+        let sheepLabel = 'Sheep', sheepCount = 0, sheepVaccinated = 0, sheepSick = 0;
 
         if (f.animals) {
-          f.animals.forEach(a => {
-            const key = a.type.toLowerCase();
-            if (key === 'cows' || key === 'cattle' || key === 'cow') {
-              cowsCount = a.count || 0;
-              cowsVaccinated = a.vaccinatedAnimalCount || 0;
-              cowsSick = a.sickAnimalCount || 0;
-            } else if (key === 'goats' || key === 'goat') {
-              goatsCount = a.count || 0;
-              goatsVaccinated = a.vaccinatedAnimalCount || 0;
-              goatsSick = a.sickAnimalCount || 0;
-            } else if (key === 'sheep') {
-              sheepCount = a.count || 0;
-              sheepVaccinated = a.vaccinatedAnimalCount || 0;
-              sheepSick = a.sickAnimalCount || 0;
-            }
-          });
+          if (f.animals[0]) {
+            cowsLabel = f.animals[0].type || 'Cattle';
+            cowsCount = f.animals[0].count || 0;
+            cowsVaccinated = f.animals[0].vaccinatedAnimalCount || 0;
+            cowsSick = f.animals[0].sickAnimalCount || 0;
+          }
+          if (f.animals[1]) {
+            goatsLabel = f.animals[1].type || 'Goats';
+            goatsCount = f.animals[1].count || 0;
+            goatsVaccinated = f.animals[1].vaccinatedAnimalCount || 0;
+            goatsSick = f.animals[1].sickAnimalCount || 0;
+          }
+          if (f.animals[2]) {
+            sheepLabel = f.animals[2].type || 'Sheep';
+            sheepCount = f.animals[2].count || 0;
+            sheepVaccinated = f.animals[2].vaccinatedAnimalCount || 0;
+            sheepSick = f.animals[2].sickAnimalCount || 0;
+          }
         }
 
         return {
@@ -112,9 +115,9 @@ export const farmsAPI = {
           numVaccinated: vac || 0,
           numSick: sick || 0,
           animalType,
-          cowsCount, cowsVaccinated, cowsSick,
-          goatsCount, goatsVaccinated, goatsSick,
-          sheepCount, sheepVaccinated, sheepSick,
+          cowsLabel, cowsCount, cowsVaccinated, cowsSick,
+          goatsLabel, goatsCount, goatsVaccinated, goatsSick,
+          sheepLabel, sheepCount, sheepVaccinated, sheepSick,
           animals: { cows: cowsCount, goats: goatsCount, sheep: sheepCount },
           breakdown: f.animals || [],
           notes: ''
@@ -137,29 +140,32 @@ export const farmsAPI = {
       if (t === 'cows' || t === 'cattle' || t === 'cow') animalType = 'Cattle';
       else if (t === 'goats' || t === 'goat') animalType = 'Goats';
       else if (t === 'sheep') animalType = 'Sheep';
+      else animalType = f.animals[0].type;
     }
 
-    let cowsCount = 0, cowsVaccinated = 0, cowsSick = 0;
-    let goatsCount = 0, goatsVaccinated = 0, goatsSick = 0;
-    let sheepCount = 0, sheepVaccinated = 0, sheepSick = 0;
+    let cowsLabel = 'Cattle', cowsCount = 0, cowsVaccinated = 0, cowsSick = 0;
+    let goatsLabel = 'Goats', goatsCount = 0, goatsVaccinated = 0, goatsSick = 0;
+    let sheepLabel = 'Sheep', sheepCount = 0, sheepVaccinated = 0, sheepSick = 0;
 
     if (f.animals) {
-      f.animals.forEach(a => {
-        const key = a.type.toLowerCase();
-        if (key === 'cows' || key === 'cattle' || key === 'cow') {
-          cowsCount = a.count || 0;
-          cowsVaccinated = a.vaccinatedAnimalCount || 0;
-          cowsSick = a.sickAnimalCount || 0;
-        } else if (key === 'goats' || key === 'goat') {
-          goatsCount = a.count || 0;
-          goatsVaccinated = a.vaccinatedAnimalCount || 0;
-          goatsSick = a.sickAnimalCount || 0;
-        } else if (key === 'sheep') {
-          sheepCount = a.count || 0;
-          sheepVaccinated = a.vaccinatedAnimalCount || 0;
-          sheepSick = a.sickAnimalCount || 0;
-        }
-      });
+      if (f.animals[0]) {
+        cowsLabel = f.animals[0].type || 'Cattle';
+        cowsCount = f.animals[0].count || 0;
+        cowsVaccinated = f.animals[0].vaccinatedAnimalCount || 0;
+        cowsSick = f.animals[0].sickAnimalCount || 0;
+      }
+      if (f.animals[1]) {
+        goatsLabel = f.animals[1].type || 'Goats';
+        goatsCount = f.animals[1].count || 0;
+        goatsVaccinated = f.animals[1].vaccinatedAnimalCount || 0;
+        goatsSick = f.animals[1].sickAnimalCount || 0;
+      }
+      if (f.animals[2]) {
+        sheepLabel = f.animals[2].type || 'Sheep';
+        sheepCount = f.animals[2].count || 0;
+        sheepVaccinated = f.animals[2].vaccinatedAnimalCount || 0;
+        sheepSick = f.animals[2].sickAnimalCount || 0;
+      }
     }
 
     return {
@@ -171,9 +177,9 @@ export const farmsAPI = {
       numVaccinated: vac,
       numSick: sick,
       animalType,
-      cowsCount, cowsVaccinated, cowsSick,
-      goatsCount, goatsVaccinated, goatsSick,
-      sheepCount, sheepVaccinated, sheepSick,
+      cowsLabel, cowsCount, cowsVaccinated, cowsSick,
+      goatsLabel, goatsCount, goatsVaccinated, goatsSick,
+      sheepLabel, sheepCount, sheepVaccinated, sheepSick,
       animals: { cows: cowsCount, goats: goatsCount, sheep: sheepCount },
       breakdown: f.animals || [],
       notes: ''
@@ -191,9 +197,9 @@ export const farmsAPI = {
     } else {
       // Mixed
       animalsList = [
-        { type: 'Cows', count: Number(data.cowsCount || 0), vaccinatedAnimalCount: Number(data.cowsVaccinated || 0), sickAnimalCount: Number(data.cowsSick || 0) },
-        { type: 'Goats', count: Number(data.goatsCount || 0), vaccinatedAnimalCount: Number(data.goatsVaccinated || 0), sickAnimalCount: Number(data.goatsSick || 0) },
-        { type: 'Sheep', count: Number(data.sheepCount || 0), vaccinatedAnimalCount: Number(data.sheepVaccinated || 0), sickAnimalCount: Number(data.sheepSick || 0) }
+        { type: data.cowsLabel || 'Cows', count: Number(data.cowsCount || 0), vaccinatedAnimalCount: Number(data.cowsVaccinated || 0), sickAnimalCount: Number(data.cowsSick || 0) },
+        { type: data.goatsLabel || 'Goats', count: Number(data.goatsCount || 0), vaccinatedAnimalCount: Number(data.goatsVaccinated || 0), sickAnimalCount: Number(data.goatsSick || 0) },
+        { type: data.sheepLabel || 'Sheep', count: Number(data.sheepCount || 0), vaccinatedAnimalCount: Number(data.sheepVaccinated || 0), sickAnimalCount: Number(data.sheepSick || 0) }
       ].filter(a => a.count > 0 || a.vaccinatedAnimalCount > 0 || a.sickAnimalCount > 0);
 
       // Fallback in case they submit zeros for all categories but entered a general total
@@ -202,9 +208,9 @@ export const farmsAPI = {
         const vac = Math.floor(Number(data.numVaccinated) / 3);
         const sickVal = Math.floor(Number(data.numSick || 0) / 3);
         animalsList = [
-          { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-          { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-          { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
+          { type: data.cowsLabel || 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: data.goatsLabel || 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: data.sheepLabel || 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
         ];
       }
     }
@@ -231,9 +237,9 @@ export const farmsAPI = {
     } else {
       // Mixed
       animalsList = [
-        { type: 'Cows', count: Number(data.cowsCount || 0), vaccinatedAnimalCount: Number(data.cowsVaccinated || 0), sickAnimalCount: Number(data.cowsSick || 0) },
-        { type: 'Goats', count: Number(data.goatsCount || 0), vaccinatedAnimalCount: Number(data.goatsVaccinated || 0), sickAnimalCount: Number(data.goatsSick || 0) },
-        { type: 'Sheep', count: Number(data.sheepCount || 0), vaccinatedAnimalCount: Number(data.sheepVaccinated || 0), sickAnimalCount: Number(data.sheepSick || 0) }
+        { type: data.cowsLabel || 'Cows', count: Number(data.cowsCount || 0), vaccinatedAnimalCount: Number(data.cowsVaccinated || 0), sickAnimalCount: Number(data.cowsSick || 0) },
+        { type: data.goatsLabel || 'Goats', count: Number(data.goatsCount || 0), vaccinatedAnimalCount: Number(data.goatsVaccinated || 0), sickAnimalCount: Number(data.goatsSick || 0) },
+        { type: data.sheepLabel || 'Sheep', count: Number(data.sheepCount || 0), vaccinatedAnimalCount: Number(data.sheepVaccinated || 0), sickAnimalCount: Number(data.sheepSick || 0) }
       ].filter(a => a.count > 0 || a.vaccinatedAnimalCount > 0 || a.sickAnimalCount > 0);
 
       // Fallback
@@ -242,9 +248,9 @@ export const farmsAPI = {
         const vac = Math.floor(Number(data.numVaccinated) / 3);
         const sickVal = Math.floor(Number(data.numSick || 0) / 3);
         animalsList = [
-          { type: 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-          { type: 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
-          { type: 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
+          { type: data.cowsLabel || 'Cows', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: data.goatsLabel || 'Goats', count: count || 0, vaccinatedAnimalCount: vac || 0, sickAnimalCount: sickVal || 0 },
+          { type: data.sheepLabel || 'Sheep', count: Number(data.totalAnimals) - 2 * count, vaccinatedAnimalCount: Number(data.numVaccinated) - 2 * vac, sickAnimalCount: Number(data.numSick || 0) - 2 * sickVal }
         ];
       }
     }

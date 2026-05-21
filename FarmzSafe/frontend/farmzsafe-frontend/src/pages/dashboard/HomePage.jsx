@@ -20,6 +20,35 @@ const CHART_COLORS = [
 ];
 
 
+const getAnimalIcon = (name) => {
+  const norm = (name || '').toLowerCase();
+  if (norm.includes('cow') || norm.includes('cattle') || norm.includes('bull') || norm.includes('calf') || norm.includes('ox')) {
+    return 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('goat') || norm.includes('kid') || norm.includes('caprine')) {
+    return 'https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('sheep') || norm.includes('lamb') || norm.includes('ram') || norm.includes('ewe')) {
+    return 'https://images.unsplash.com/photo-1484557985045-edf25e08da73?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('chicken') || norm.includes('poultry') || norm.includes('hen') || norm.includes('rooster') || norm.includes('turkey') || norm.includes('bird') || norm.includes('duck') || norm.includes('avian')) {
+    return 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('pig') || norm.includes('swine') || norm.includes('boar') || norm.includes('sow') || norm.includes('pork')) {
+    return 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('horse') || norm.includes('equine') || norm.includes('foal') || norm.includes('pony') || norm.includes('donkey') || norm.includes('mule')) {
+    return 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('rabbit') || norm.includes('hare') || norm.includes('bunny')) {
+    return 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=120&q=80';
+  }
+  if (norm.includes('fish') || norm.includes('shrimp') || norm.includes('aquaculture') || norm.includes('crab') || norm.includes('lobster')) {
+    return 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=120&q=80';
+  }
+  return 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=120&q=80';
+};
+
 export default function HomePage() {
   const { user } = useAuth();
   const [farms, setFarms] = useState([]);
@@ -46,10 +75,28 @@ export default function HomePage() {
     load();
   }, []);
 
-  const totalAnimals = farms.reduce((acc, f) => acc + (f.animals?.cows || 0) + (f.animals?.goats || 0) + (f.animals?.sheep || 0), 0);
+  const totalAnimals = farms.reduce((acc, f) => acc + (f.totalAnimals || 0), 0);
   const totalVaccinatedAnimals = farms.reduce((acc, f) => acc + (f.numVaccinated || 0), 0);
   const totalSickAnimals = farms.reduce((acc, f) => acc + (f.numSick || 0), 0);
   const nonVaccinatedAnimals = Math.max(0, totalAnimals - totalVaccinatedAnimals);
+
+  // Compute dynamic animal category counts
+  const animalCategoryMap = {};
+  farms.forEach(f => {
+    if (f.breakdown && f.breakdown.length > 0) {
+      f.breakdown.forEach(anim => {
+        const type = anim.type || 'Other';
+        const count = anim.count || 0;
+        const normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+        animalCategoryMap[normalized] = (animalCategoryMap[normalized] || 0) + count;
+      });
+    } else if (f.animalType && f.animalType !== 'Mixed (multiple types)') {
+      const type = f.animalType;
+      const count = f.totalAnimals || 0;
+      const normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+      animalCategoryMap[normalized] = (animalCategoryMap[normalized] || 0) + count;
+    }
+  });
 
   const doughnutData = {
     labels: ['Vaccinated', 'Pending / Unvaccinated'],
@@ -180,18 +227,15 @@ export default function HomePage() {
       <div className="animal-types-preview">
         <h3>Livestock Overview</h3>
         <div className="animal-grid">
-          <div className="animal-item">
-            <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=80&q=80" alt="Cows" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <p>Cows ({farms.reduce((a, f) => a + (f.animals?.cows || 0), 0)})</p>
-          </div>
-          <div className="animal-item">
-            <img src="https://images.unsplash.com/photo-1524024973431-2ad916746881?auto=format&fit=crop&w=80&q=80" alt="Goats" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <p>Goats ({farms.reduce((a, f) => a + (f.animals?.goats || 0), 0)})</p>
-          </div>
-          <div className="animal-item">
-            <img src="https://images.unsplash.com/photo-1484557985045-edf25e08da73?auto=format&fit=crop&w=80&q=80" alt="Sheep" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-            <p>Sheep ({farms.reduce((a, f) => a + (f.animals?.sheep || 0), 0)})</p>
-          </div>
+          {Object.entries(animalCategoryMap).map(([type, count]) => (
+            <div key={type} className="animal-item">
+              <img src={getAnimalIcon(type)} alt={type} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+              <p>{type} ({count})</p>
+            </div>
+          ))}
+          {Object.keys(animalCategoryMap).length === 0 && (
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No livestock logged.</div>
+          )}
           <div className="animal-item">
             <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=80&q=80" alt="Vaccinated" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
             <p>Vaccinated ({totalVaccinatedAnimals})</p>
