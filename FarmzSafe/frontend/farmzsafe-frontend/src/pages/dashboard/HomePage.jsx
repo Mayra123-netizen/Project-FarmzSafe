@@ -87,13 +87,21 @@ export default function HomePage() {
       f.breakdown.forEach(anim => {
         const type = anim.type || 'Other';
         const count = anim.count || 0;
-        const normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+        // Normalize to singular form
+        let normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+        if (normalized.endsWith('s') && !normalized.endsWith('ss')) {
+          normalized = normalized.slice(0, -1);
+        }
         animalCategoryMap[normalized] = (animalCategoryMap[normalized] || 0) + count;
       });
     } else if (f.animalType && f.animalType !== 'Mixed (multiple types)') {
       const type = f.animalType;
       const count = f.totalAnimals || 0;
-      const normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+      // Normalize to singular form
+      let normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+      if (normalized.endsWith('s') && !normalized.endsWith('ss')) {
+        normalized = normalized.slice(0, -1);
+      }
       animalCategoryMap[normalized] = (animalCategoryMap[normalized] || 0) + count;
     }
   });
@@ -131,7 +139,7 @@ export default function HomePage() {
               <img
                 src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?auto=format&fit=crop&w=120&q=80"
                 alt="Total Animals"
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }}
               />
             )
           },
@@ -143,7 +151,7 @@ export default function HomePage() {
               <img
                 src="https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=120&q=80"
                 alt="Vaccinated"
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }}
               />
             )
           },
@@ -155,7 +163,7 @@ export default function HomePage() {
               <img
                 src="https://images.unsplash.com/photo-1584036561566-baf241f2c44e?auto=format&fit=crop&w=120&q=80"
                 alt="Sick"
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }}
               />
             )
           },
@@ -167,7 +175,7 @@ export default function HomePage() {
               <img
                 src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=120&q=80"
                 alt="Active Farms"
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover' }}
               />
             )
           },
@@ -229,7 +237,7 @@ export default function HomePage() {
         <div className="animal-grid">
           {Object.entries(animalCategoryMap).map(([type, count]) => (
             <div key={type} className="animal-item">
-              <img src={getAnimalIcon(type)} alt={type} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+              <img src={getAnimalIcon(type)} alt={type} style={{ width: '90px', height: '90px', borderRadius: '8px', objectFit: 'cover' }} />
               <p>{type} ({count})</p>
             </div>
           ))}
@@ -237,7 +245,7 @@ export default function HomePage() {
             <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No livestock logged.</div>
           )}
           <div className="animal-item">
-            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=80&q=80" alt="Vaccinated" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=80&q=80" alt="Vaccinated" style={{ width: '90px', height: '90px', borderRadius: '8px', objectFit: 'cover' }} />
             <p>Vaccinated ({totalVaccinatedAnimals})</p>
           </div>
         </div>

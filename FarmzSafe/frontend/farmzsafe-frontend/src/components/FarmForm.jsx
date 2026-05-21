@@ -3,12 +3,10 @@ import { useState, useEffect } from 'react';
 const ANIMAL_TYPES = ['Mixed (multiple types)', 'Cattle', 'Poultry', 'Goats', 'Sheep'];
 
 const EMPTY = {
-  name: '', location: '', yearEstablished: '',
+  name: '', location: '',
   animalType: 'Mixed (multiple types)',
   totalAnimals: '', numVaccinated: '', numSick: '0',
-  cowsLabel: 'Cattle', cowsCount: '0', cowsVaccinated: '0', cowsSick: '0',
-  goatsLabel: 'Goats', goatsCount: '0', goatsVaccinated: '0', goatsSick: '0',
-  sheepLabel: 'Sheep', sheepCount: '0', sheepVaccinated: '0', sheepSick: '0',
+  animals: [],
   manager: '', notes: ''
 };
 
@@ -50,32 +48,67 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
 
   const set = (field) => (e) => setForm(prev => ({ ...prev, [field]: e.target.value }));
 
-  useEffect(() => {
-    if (form.animalType === 'Mixed (multiple types)') {
-      const total = Number(form.cowsCount || 0) + Number(form.goatsCount || 0) + Number(form.sheepCount || 0);
-      const vac = Number(form.cowsVaccinated || 0) + Number(form.goatsVaccinated || 0) + Number(form.sheepVaccinated || 0);
-      const sick = Number(form.cowsSick || 0) + Number(form.goatsSick || 0) + Number(form.sheepSick || 0);
+  const addAnimal = () => {
+    setForm(prev => ({
+      ...prev,
+      animals: [...(prev.animals || []), { type: '', count: 0, vaccinatedAnimalCount: 0, sickAnimalCount: 0 }]
+    }));
+  };
 
-      if (
-        Number(form.totalAnimals) !== total ||
-        Number(form.numVaccinated) !== vac ||
-        Number(form.numSick) !== sick
-      ) {
-        setForm(prev => ({
-          ...prev,
-          totalAnimals: String(total),
-          numVaccinated: String(vac),
-          numSick: String(sick)
-        }));
-      }
+  const updateAnimal = (idx, field, value) => {
+    setForm(prev => {
+      const updated = [...(prev.animals || [])];
+      updated[idx] = { ...updated[idx], [field]: field === 'type' ? value : Number(value) };
+      
+      // Auto-calculate totals
+      const total = updated.reduce((sum, a) => sum + (a.count || 0), 0);
+      const vac = updated.reduce((sum, a) => sum + (a.vaccinatedAnimalCount || 0), 0);
+      const sick = updated.reduce((sum, a) => sum + (a.sickAnimalCount || 0), 0);
+      
+      return {
+        ...prev,
+        animals: updated,
+        totalAnimals: String(total),
+        numVaccinated: String(vac),
+        numSick: String(sick)
+      };
+    });
+  };
+
+  const removeAnimal = (idx) => {
+    setForm(prev => {
+      const updated = prev.animals.filter((_, i) => i !== idx);
+      const total = updated.reduce((sum, a) => sum + (a.count || 0), 0);
+      const vac = updated.reduce((sum, a) => sum + (a.vaccinatedAnimalCount || 0), 0);
+      const sick = updated.reduce((sum, a) => sum + (a.sickAnimalCount || 0), 0);
+      
+      return {
+        ...prev,
+        animals: updated,
+        totalAnimals: String(total),
+        numVaccinated: String(vac),
+        numSick: String(sick)
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (form.animalType !== 'Mixed (multiple types)') {
+      const total = Number(form.totalAnimals || 0);
+      const vac = Number(form.numVaccinated || 0);
+      const sick = Number(form.numSick || 0);
+      
+      setForm(prev => ({
+        ...prev,
+        animals: total > 0 ? [{
+          type: form.animalType,
+          count: total,
+          vaccinatedAnimalCount: vac,
+          sickAnimalCount: sick
+        }] : []
+      }));
     }
-  }, [
-    form.animalType,
-    form.cowsCount, form.cowsVaccinated, form.cowsSick,
-    form.goatsCount, form.goatsVaccinated, form.goatsSick,
-    form.sheepCount, form.sheepVaccinated, form.sheepSick,
-    form.totalAnimals, form.numVaccinated, form.numSick
-  ]);
+  }, [form.animalType]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -110,15 +143,9 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
               <input type="text" placeholder="e.g. Sunrise Valley Ranch" value={form.name} onChange={set('name')} required />
             </div>
 
-            <div className="form-group-row">
-              <div className="form-group">
-                <label>State / Location</label>
-                <input type="text" placeholder="e.g. Benue State" value={form.location} onChange={set('location')} required />
-              </div>
-              <div className="form-group">
-                <label>Year Established</label>
-                <input type="text" placeholder="e.g. 2021" value={form.yearEstablished} onChange={set('yearEstablished')} />
-              </div>
+            <div className="form-group">
+              <label>State / Location</label>
+              <input type="text" placeholder="e.g. Benue State" value={form.location} onChange={set('location')} required />
             </div>
 
             <div className="form-group">
@@ -141,83 +168,104 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
               </select>
             </div>
 
-            {form.animalType === 'Mixed (multiple types)' && (
-              <div className="livestock-breakdown-section" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.25rem', border: '1px dashed var(--border)' }}>
-                {/* Header Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(0,0,0,0.05)', paddingBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>Animal Category</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Total</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Vaccinated</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Sick / Ill</span>
-                </div>
-                
-                {/* Cattle/Animal 1 Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <img 
-                      src={getAnimalIcon(form.cowsLabel)} 
-                      alt={form.cowsLabel} 
-                      style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 }} 
-                    />
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Cattle" 
-                      value={form.cowsLabel} 
-                      onChange={set('cowsLabel')} 
-                      className="compact-input" 
-                      style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', height: '36px', width: '100%' }}
-                    />
-                  </div>
-                  <input type="number" placeholder="Total" value={form.cowsCount} onChange={set('cowsCount')} className="compact-input" style={{ height: '36px' }} />
-                  <input type="number" placeholder="Vac." value={form.cowsVaccinated} onChange={set('cowsVaccinated')} className="compact-input" style={{ height: '36px' }} />
-                  <input type="number" placeholder="Sick" value={form.cowsSick} onChange={set('cowsSick')} className="compact-input" style={{ height: '36px' }} />
-                </div>
-
-                {/* Goats/Animal 2 Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <img 
-                      src={getAnimalIcon(form.goatsLabel)} 
-                      alt={form.goatsLabel} 
-                      style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 }} 
-                    />
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Goats" 
-                      value={form.goatsLabel} 
-                      onChange={set('goatsLabel')} 
-                      className="compact-input" 
-                      style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', height: '36px', width: '100%' }}
-                    />
-                  </div>
-                  <input type="number" placeholder="Total" value={form.goatsCount} onChange={set('goatsCount')} className="compact-input" style={{ height: '36px' }} />
-                  <input type="number" placeholder="Vac." value={form.goatsVaccinated} onChange={set('goatsVaccinated')} className="compact-input" style={{ height: '36px' }} />
-                  <input type="number" placeholder="Sick" value={form.goatsSick} onChange={set('goatsSick')} className="compact-input" style={{ height: '36px' }} />
-                </div>
-
-                {/* Sheep/Animal 3 Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <img 
-                      src={getAnimalIcon(form.sheepLabel)} 
-                      alt={form.sheepLabel} 
-                      style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 }} 
-                    />
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Sheep" 
-                      value={form.sheepLabel} 
-                      onChange={set('sheepLabel')} 
-                      className="compact-input" 
-                      style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', height: '36px', width: '100%' }}
-                    />
-                  </div>
-                  <input type="number" placeholder="Total" value={form.sheepCount} onChange={set('sheepCount')} className="compact-input" style={{ height: '36px' }} />
-                  <input type="number" placeholder="Vac." value={form.sheepVaccinated} onChange={set('sheepVaccinated')} className="compact-input" style={{ height: '36px' }} />
-                  <input type="number" placeholder="Sick" value={form.sheepSick} onChange={set('sheepSick')} className="compact-input" style={{ height: '36px' }} />
-                </div>
+            <div className="livestock-breakdown-section" style={{ background: 'rgba(0,0,0,0.02)', padding: '1rem', borderRadius: '12px', marginBottom: '1.25rem', border: '1px dashed var(--border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 600, color: 'var(--text)' }}>Livestock List</h4>
+                <button 
+                  type="button"
+                  onClick={addAnimal}
+                  style={{ 
+                    padding: '6px 12px', 
+                    borderRadius: '6px', 
+                    border: 'none', 
+                    background: 'var(--primary)',
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Add Animal
+                </button>
               </div>
-            )}
+
+              {(!form.animals || form.animals.length === 0) ? (
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', padding: '1rem' }}>
+                  No animals added yet. Click "Add Animal" to get started.
+                </p>
+              ) : (
+                <>
+                  {/* Header Row */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '110px 50px 65px 50px 35px', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(0,0,0,0.05)', paddingBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>Animal Type</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Total</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Vaccinated</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>Sick</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}></span>
+                  </div>
+
+                  {/* Animal Rows */}
+                  {form.animals.map((animal, idx) => (
+                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '110px 50px 65px 50px 35px', gap: '0.5rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Cattle" 
+                        value={animal.type} 
+                        onChange={(e) => updateAnimal(idx, 'type', e.target.value)}
+                        className="compact-input" 
+                        style={{ fontSize: '0.7rem', fontWeight: 600, padding: '5px 6px', height: '28px', width: '100%' }}
+                      />
+                      <input 
+                        type="number" 
+                        placeholder="0" 
+                        value={animal.count} 
+                        onChange={(e) => updateAnimal(idx, 'count', e.target.value)}
+                        className="compact-input" 
+                        style={{ height: '28px', textAlign: 'center', fontSize: '0.75rem' }} 
+                      />
+                      <input 
+                        type="number" 
+                        placeholder="0" 
+                        value={animal.vaccinatedAnimalCount} 
+                        onChange={(e) => updateAnimal(idx, 'vaccinatedAnimalCount', e.target.value)}
+                        className="compact-input" 
+                        style={{ height: '28px', textAlign: 'center', fontSize: '0.75rem' }} 
+                      />
+                      <input 
+                        type="number" 
+                        placeholder="0" 
+                        value={animal.sickAnimalCount} 
+                        onChange={(e) => updateAnimal(idx, 'sickAnimalCount', e.target.value)}
+                        className="compact-input" 
+                        style={{ height: '28px', textAlign: 'center', fontSize: '0.75rem' }} 
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => removeAnimal(idx)}
+                        style={{ 
+                          padding: 0, 
+                          borderRadius: '4px', 
+                          border: 'none', 
+                          background: '#ff5252',
+                          color: 'white',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          height: '28px',
+                          width: '28px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: '1'
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
 
             <div className="form-group-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
               <div className="form-group" style={{ margin: 0 }}>
@@ -226,10 +274,8 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
                   type="number"
                   placeholder="e.g. 100"
                   value={form.totalAnimals}
-                  onChange={set('totalAnimals')}
-                  readOnly={form.animalType === 'Mixed (multiple types)'}
-                  style={form.animalType === 'Mixed (multiple types)' ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : {}}
-                  required
+                  readOnly
+                  style={{ background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' }}
                 />
               </div>
               <div className="form-group" style={{ margin: 0 }}>
@@ -238,10 +284,8 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
                   type="number"
                   placeholder="e.g. 85"
                   value={form.numVaccinated}
-                  onChange={set('numVaccinated')}
-                  readOnly={form.animalType === 'Mixed (multiple types)'}
-                  style={form.animalType === 'Mixed (multiple types)' ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : {}}
-                  required
+                  readOnly
+                  style={{ background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' }}
                 />
               </div>
               <div className="form-group" style={{ margin: 0 }}>
@@ -250,10 +294,8 @@ export default function FarmForm({ onSubmit, onCancel, initial = EMPTY, loading 
                   type="number"
                   placeholder="e.g. 0"
                   value={form.numSick}
-                  onChange={set('numSick')}
-                  readOnly={form.animalType === 'Mixed (multiple types)'}
-                  style={form.animalType === 'Mixed (multiple types)' ? { background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' } : {}}
-                  required
+                  readOnly
+                  style={{ background: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' }}
                 />
               </div>
             </div>
