@@ -278,3 +278,46 @@
   }
 }
 
+@media (max-width: 768px) {
+  .navbar {
+    margin: 0.5rem;
+  }
+  .logo {
+    font-size: 1.25rem;
+  }
+  .hero-section {
+    padding: 120px 0 60px;
+  }
+  .hero-text h1 {
+    font-size: 2.2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
+  .floating-card {
+    padding: 1rem;
+    left: 0;
+    bottom: -20px;
+  }
+  .features-section, .cta-section {
+    padding: 60px 0;
+  }
+  .section-header h2 {
+    font-size: 2.2rem;
+  }
+  .cta-card {
+    padding: 2.5rem 1.5rem;
+  }
+  .cta-card h2 {
+    font-size: 2rem;
+  }
+  .cta-card p {
+    font-size: 1rem;
+  }
+  .footer-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+  }
+}
+

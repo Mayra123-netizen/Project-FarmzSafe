@@ -151,3 +151,34 @@
   .sidebar-brand p, .nav-menu span, .u-info, .sidebar-brand h1, .theme-toggle-btn span, .logout-btn span { display: none; }
   .nav-menu a { justify-content: center; padding: 0.85rem; }
 }
+
+@media (max-width: 768px) {
+  .left-sidebar {
+    width: 100%;
+    height: 70px;
+    flex-direction: row;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  .sidebar-brand, .sidebar-bottom, .user-card, .u-avatar {
+    display: none;
+  }
+  .nav-menu {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0;
+    width: 100%;
+  }
+  .nav-menu a {
+    width: auto;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+}
+
